@@ -1,0 +1,23 @@
+# 生产默认走真实 OpenAI 兼容 provider，不再静默使用 Mock。
+openai>=1.0.0
+
+# data/ 真实 PDF 文档抽取。扫描型 PDF 通过 PaddleOCR 兜底。
+# 最新 PyPI 版本验证为 3.7.0；代码仍兼容 PaddleOCR v2/v3 结果结构。
+pymupdf>=1.24.0
+pillow>=10.0.0
+paddlepaddle>=3.0.0
+paddleocr>=2.7.0
+
+# CLI 交互输入：方向键、任意位置插入/删除、中文宽字符与历史。
+prompt_toolkit>=3.0.0
+
+# CLI 展示：面板、表格、Markdown 回答和检索证据布局。
+rich>=13.0.0
+
+# ColBERT 重排可选依赖。仅当设置 RAG_COLBERT_MODEL 并希望加载
+# HuggingFace 模型时安装；未配置模型时使用本地确定性 encoder 便于测试。
+# torch>=2.0.0
+# transformers>=4.40.0
+
+# 开发/测试可选：
+# pytest>=7.0.0
