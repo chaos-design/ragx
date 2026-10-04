@@ -16,10 +16,14 @@ from rag.augmentation.prompt_builder import RagPromptBuilder
 from rag.embedding.service import EmbeddingService
 from rag.generation.generator import Generator
 from rag.ingestion.chunker import ChunkPolicy, StructureAwareChunker
-from rag.ingestion.loader import read_source_documents
 from rag.ingestion.layout import LayoutAwareChunker, MarkdownLayoutAnalyzer
+from rag.ingestion.loader import read_source_documents
 from rag.ingestion.manifest import InMemoryManifest, JsonFileManifest
-from rag.ingestion.parent_child import ParentChildChunker, ParentExpandingRetriever, ParentStore
+from rag.ingestion.parent_child import (
+    ParentChildChunker,
+    ParentExpandingRetriever,
+    ParentStore,
+)
 from rag.ingestion.sync import IncrementalSyncer, SyncReport
 from rag.memory.conversation import WindowBufferMemory
 from rag.pipeline.orchestrator import RagPipeline

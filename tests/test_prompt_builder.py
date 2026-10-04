@@ -6,8 +6,8 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.augmentation.prompt_builder import RagPromptBuilder  # noqa: E402
-from rag.interfaces import Document, ScoredDocument  # noqa: E402
+from rag.augmentation.prompt_builder import RagPromptBuilder
+from rag.interfaces import Document, ScoredDocument
 
 
 def test_prompt_builder_uses_professional_grounded_system_prompt():

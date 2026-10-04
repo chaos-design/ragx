@@ -285,40 +285,60 @@ def get_settings(
 
 
 def build_embedding_provider(cfg: Any = None) -> EmbeddingProvider:
-    """构建 embedding provider。
+    """构建真实 embedding provider。
 
-    fallback 实现无法调用真实 API，因此在缺少 API Key 时返回确定性本地实现，
-    存在 API Key 时抛出明确错误，避免静默返回假向量污染索引。
+    fallback 无法调用真实 API，因此**任何情况下都抛错**，绝不返回本地桩。
+    理由：静默返回假向量会污染持久化索引，且污染在离线状态下不可见——
+    等到接入真实模型时才发现索引不可用，代价远高于启动即失败。
+
+    需要离线跑通链路时，请显式声明 `RAG_PROVIDER=mock`（走 factory 注册的
+    mock 工厂，与本函数不同路径），意图明确、不会误伤生产配置。
 
     Example Input:
-        build_embedding_provider(cfg)
+        build_embedding_provider(Settings(api_key=""))
 
     Example Output:
-        MockEmbeddingProvider(dim=1536)
+        ProviderInitError: 无法构建真实 embedding provider...
     """
-    api_key = getattr(cfg, "api_key", "") or os.getenv("OPENAI_API_KEY", "")
-    if not api_key:
-        return MockEmbeddingProvider(dim=getattr(cfg, "embedding_dim", 256) or 256)
     raise ProviderInitError(
-        "缺少 agent_provider 共享包，无法调用真实 embedding API。"
-        "请安装 agent_provider，或改用注入式 provider："
+        _no_real_provider_message("embedding", cfg)
+    )
+
+
+def _no_real_provider_message(kind: str, cfg: Any = None) -> str:
+    """构造「无法构建真实 provider」的可执行错误信息。
+
+    Example Input:
+        _no_real_provider_message("llm", cfg)
+
+    Example Output:
+        "无法构建真实 llm provider：缺少 OPENAI_API_KEY ..."
+    """
+    api_key = getattr(cfg, "api_key", "") or os.getenv("OPENAI_API_KEY", "") or os.getenv("RAG_API_KEY", "")
+    reason = "缺少 OPENAI_API_KEY" if not api_key else "缺少 agent_provider 共享包，无法调用真实 API"
+    return (
+        f"无法构建真实 {kind} provider：{reason}。\n"
+        "可选路径：\n"
+        "  1. 配置凭据后重试：export OPENAI_API_KEY=sk-...\n"
+        "  2. 安装共享包以获得完整 provider 能力：pip install agent_provider\n"
+        "  3. 仅离线验证链路连通性（产物不可用于生产），需同时设置两个开关：\n"
+        "       export RAG_PROVIDER=mock\n"
+        "       export RAG_ALLOW_MOCK_PROVIDER=1\n"
+        "  4. 注入自定义 provider："
         "RagApplication(cfg, providers=ProviderBundle(embedding=..., llm=...))"
     )
 
 
 def build_llm_provider(cfg: Any = None) -> LLMProvider:
-    """构建 LLM provider（语义同build_embedding_provider）。
+    """构建真实 LLM provider（语义同 build_embedding_provider，一律抛错）。
+
+    静默返回桩 LLM 是最危险的一种降级：检索链路真实工作，生成环节返回
+    固定占位文本，最终表现为一篇「看起来正常但内容全错」的答案。
 
     Example Input:
-        build_llm_provider(cfg)
+        build_llm_provider(Settings(api_key=""))
 
     Example Output:
-        MockLLMProvider()
+        ProviderInitError: 无法构建真实 llm provider...
     """
-    api_key = getattr(cfg, "api_key", "") or os.getenv("OPENAI_API_KEY", "")
-    if not api_key:
-        return MockLLMProvider()
-    raise ProviderInitError(
-        "缺少 agent_provider 共享包，无法调用真实 LLM API。"
-        "请安装 agent_provider，或改用注入式 provider。"
-    )
+    raise ProviderInitError(_no_real_provider_message("llm", cfg))

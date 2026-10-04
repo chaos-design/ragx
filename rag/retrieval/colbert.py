@@ -16,7 +16,6 @@ from typing import Any, Protocol
 from rag.interfaces import Document, ScoredDocument
 from rag.retrieval.lexical import _tokenize
 
-
 TokenVectors = list[list[float]]
 
 
@@ -383,7 +382,7 @@ def _token_vector(token: str, dimension: int) -> list[float]:
     values: list[float] = []
     counter = 0
     while len(values) < dimension:
-        payload = f"{token}:{counter}".encode("utf-8")
+        payload = f"{token}:{counter}".encode()
         digest = hashlib.blake2b(payload, digest_size=32).digest()
         values.extend((byte / 127.5) - 1.0 for byte in digest)
         counter += 1

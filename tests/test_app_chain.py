@@ -7,15 +7,18 @@ import tempfile
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag.app import (  # noqa: E402
+from config.settings import Settings
+from rag.app import (
     DEFAULT_RERANK_TOP_K,
     DEFAULT_RETRIEVAL_CANDIDATE_K,
     RagApplication,
 )
-from rag.ingestion.layout import LayoutAwareChunker  # noqa: E402
-from rag.interfaces import ChatMessage  # noqa: E402
-from rag.interfaces import Document, ScoredDocument  # noqa: E402
+from rag.ingestion.layout import LayoutAwareChunker
+from rag.interfaces import (
+    ChatMessage,
+    Document,
+    ScoredDocument,
+)
 
 
 def _write(d: str, name: str, text: str) -> None:

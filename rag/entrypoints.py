@@ -398,7 +398,9 @@ def load_evaluation_dataset(dataset_path: str | Path) -> list[dict[str, Any]]:
         except json.JSONDecodeError as exc:
             raise ValueError(f"评估集第 {line_number} 行不是合法 JSON") from exc
         if not isinstance(raw, dict):
-            raise ValueError(f"评估集第 {line_number} 行必须是 JSON 对象")
+            # ValueError 而非 TypeError：这是用户提供的评估集文件内容有误，
+            # 属于「值不合法」而非「调用方传错类型」。
+            raise ValueError(f"评估集第 {line_number} 行必须是 JSON 对象")  # noqa: TRY004
         raw_query = raw.get("query")
         item = {
             "query": _require_text(raw_query, f"评估集第 {line_number} 行 query"),
@@ -593,7 +595,8 @@ def _list_field(raw: dict[str, Any], key: str, line_number: int) -> list[str]:
     if value is None:
         return []
     if not isinstance(value, list):
-        raise ValueError(f"评估集第 {line_number} 行 {key} 必须是列表")
+        # 同上：评估集内容有误属于值错误，调用方传参类型错误才用 TypeError。
+        raise ValueError(f"评估集第 {line_number} 行 {key} 必须是列表")  # noqa: TRY004
     return [str(item) for item in value]
 
 

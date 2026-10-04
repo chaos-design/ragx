@@ -5,10 +5,12 @@ import os
 import sys
 from unittest.mock import patch
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config import settings as settings_module  # noqa: E402
-from config.settings import (  # noqa: E402
+from config import settings as settings_module
+from config.settings import (
     Settings,
     ensure_real_provider,
     load_settings,
@@ -167,6 +169,46 @@ def test_ensure_real_provider_rejects_test_provider():
 
     ensure_real_provider(Settings(provider="openai"))
     print("✓ settings: test provider rejected, real provider accepted")
+
+
+def test_mock_provider_requires_explicit_opt_in(monkeypatch):
+    """mock 必须双开关显式放行，缺一即拒绝。
+
+    回归风险：单开关（仅 RAG_PROVIDER=mock）会让「误把 mock 带上生产」
+    只需要一次疏忽；双开关把误用概率降到两次独立疏忽。
+    """
+    monkeypatch.delenv("RAG_ALLOW_MOCK_PROVIDER", raising=False)
+    with pytest.raises(ValueError, match="RAG_ALLOW_MOCK_PROVIDER"):
+        ensure_real_provider(Settings(provider="mock"))
+
+    for truthy in ("1", "true", "TRUE", "yes", "on"):
+        monkeypatch.setenv("RAG_ALLOW_MOCK_PROVIDER", truthy)
+        ensure_real_provider(Settings(provider="mock"))  # 不应抛错
+
+    for falsy in ("0", "false", "no", "off", ""):
+        monkeypatch.setenv("RAG_ALLOW_MOCK_PROVIDER", falsy)
+        with pytest.raises(ValueError):
+            ensure_real_provider(Settings(provider="mock"))
+    print("✓ settings: mock provider double-switch opt-in enforced")
+
+
+def test_fallback_never_returns_silent_mock():
+    """fallback 必须拒绝构建真实 provider，绝不静默返回桩。
+
+    回归风险：静默返回桩 embedding 会把假向量写进持久化索引，
+    静默返回桩 LLM 会产出「格式正常但内容全错」的答案。
+    """
+    from rag.providers import _fallback
+
+    for builder in (_fallback.build_embedding_provider, _fallback.build_llm_provider):
+        with pytest.raises(_fallback.ProviderInitError) as excinfo:
+            builder(Settings(api_key="", embedding_dim=1536))
+        message = str(excinfo.value)
+        # 错误信息必须给出可执行出路，且推荐路径与实际守卫一致
+        assert "OPENAI_API_KEY" in message
+        assert "RAG_PROVIDER=mock" in message
+        assert "RAG_ALLOW_MOCK_PROVIDER" in message
+    print("✓ settings: fallback refuses to build real providers silently")
 
 
 if __name__ == "__main__":

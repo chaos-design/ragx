@@ -6,16 +6,19 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag.app import RagApplication  # noqa: E402
-from rag.embedding.service import EmbeddingService  # noqa: E402
-from rag.ingestion.parent_child import (ParentChildChunker,  # noqa: E402
-                                        ParentExpandingRetriever, ParentStore)
-from rag.ingestion.sync import IncrementalSyncer  # noqa: E402
-from rag.retrieval.retriever import VectorRetriever  # noqa: E402
-from rag.vectorstore.factory import build_vector_store  # noqa: E402
-from rag.vectorstore.memory_store import InMemoryVectorStore  # noqa: E402
-from rag.vectorstore.sqlite_store import SQLiteVectorStore  # noqa: E402
+from config.settings import Settings
+from rag.app import RagApplication
+from rag.embedding.service import EmbeddingService
+from rag.ingestion.parent_child import (
+    ParentChildChunker,
+    ParentExpandingRetriever,
+    ParentStore,
+)
+from rag.ingestion.sync import IncrementalSyncer
+from rag.retrieval.retriever import VectorRetriever
+from rag.vectorstore.factory import build_vector_store
+from rag.vectorstore.memory_store import InMemoryVectorStore
+from rag.vectorstore.sqlite_store import SQLiteVectorStore
 
 DOC = ("# 制度\n\n## 报销\n出差报销需在七天内提交相关凭证材料，逾期未提交的费用"
        "将无法报销，请所有同事务必在规定时间窗口内完成线上提交与审批流程，避免影响个人权益。\n")
@@ -107,7 +110,7 @@ def test_persistent_manifest_cross_run():
             fh.write(DOC)
         store_dir = os.path.join(d, "stores")
         os.makedirs(store_dir)
-        mkcfg = lambda: Settings(  # noqa: E731
+        mkcfg = lambda: Settings(
             provider="mock",
             vector_backend="sqlite",
             sqlite_path=os.path.join(store_dir, "v.db"),

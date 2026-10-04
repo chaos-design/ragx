@@ -8,9 +8,9 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag.app import RagApplication  # noqa: E402
-from rag.providers import (  # noqa: E402
+from config.settings import Settings
+from rag.app import RagApplication
+from rag.providers import (
     ProviderBundle,
     build_embedding_provider,
     build_llm_provider,

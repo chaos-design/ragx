@@ -11,8 +11,8 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag.app import build_pipeline  # noqa: E402
+from config.settings import Settings
+from rag.app import build_pipeline
 
 DOC = """# RAG
 

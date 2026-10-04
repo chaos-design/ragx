@@ -16,18 +16,20 @@ from typing import Any
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from config.settings import (  # noqa: E402
+from config.settings import (
     DEFAULT_MANIFEST_PATH,
     DEFAULT_SQLITE_PATH,
     ensure_real_provider,
     load_settings,
 )
-from rag.app import RagApplication  # noqa: E402
-from rag.ingestion.chunker import ChunkPolicy, StructureAwareChunker  # noqa: E402
-from rag.ingestion.layout import LayoutAwareChunker, MarkdownLayoutAnalyzer  # noqa: E402
-from rag.ingestion.loader import read_source_documents  # noqa: E402
-from rag.ingestion.sync import SyncReport  # noqa: E402
-
+from rag.app import RagApplication
+from rag.ingestion.chunker import ChunkPolicy, StructureAwareChunker
+from rag.ingestion.layout import (
+    LayoutAwareChunker,
+    MarkdownLayoutAnalyzer,
+)
+from rag.ingestion.loader import read_source_documents
+from rag.ingestion.sync import SyncReport
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 AGENTS_ROOT = PROJECT_ROOT.parents[1]

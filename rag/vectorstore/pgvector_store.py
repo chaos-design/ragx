@@ -31,7 +31,7 @@ RuntimeError，由上游降级到 SQLite/内存(本仓库测试即走降级，�
 from __future__ import annotations
 
 import json
-from typing import Sequence
+from collections.abc import Sequence
 
 from rag.interfaces import Document, ScoredDocument, VectorStore
 
@@ -39,7 +39,7 @@ from rag.interfaces import Document, ScoredDocument, VectorStore
 class PgVectorStore(VectorStore):
     def __init__(self, dsn: str, dim: int = 1536, table: str = "chunks") -> None:
         try:
-            import psycopg  # noqa: F401
+            import psycopg
         except ImportError as e:  # pragma: no cover - 取决于运行环境
             raise RuntimeError("PgVectorStore 需要 psycopg，请 pip install 'psycopg[binary]'") from e
         import psycopg

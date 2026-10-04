@@ -6,15 +6,15 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.interfaces import Document, ScoredDocument  # noqa: E402
-from rag.retrieval.evaluation import (  # noqa: E402
-    EvaluationConfig,
-    evaluate_retrieval_effect,
-)
-from rag.retrieval.cross_encoder import (  # noqa: E402
+from rag.interfaces import Document, ScoredDocument
+from rag.retrieval.cross_encoder import (
     CrossEncoderReranker,
     CrossEncoderScorer,
     rank_by_relevance,
+)
+from rag.retrieval.evaluation import (
+    EvaluationConfig,
+    evaluate_retrieval_effect,
 )
 
 

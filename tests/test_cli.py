@@ -21,13 +21,17 @@ from unittest.mock import patch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from cli.app import ChatCLI  # noqa: E402
-from cli.line_editor import EditBuffer, _render, read_line  # noqa: E402
-from cli.rag_service import (ChatAnswer, ChatService, EchoChatService,  # noqa: E402
-                             RagChatService)
-from cli.rendering import ChatRenderer  # noqa: E402
-from cli.session import Session  # noqa: E402
-from cli.spinner import Spinner  # noqa: E402
+from cli.app import ChatCLI
+from cli.line_editor import EditBuffer, _render, read_line
+from cli.rag_service import (
+    ChatAnswer,
+    ChatService,
+    EchoChatService,
+    RagChatService,
+)
+from cli.rendering import ChatRenderer
+from cli.session import Session
+from cli.spinner import Spinner
 
 
 def test_edit_buffer_insert_and_cursor():
@@ -359,9 +363,11 @@ def test_read_line_non_tty_and_render():
         def flush(self):
             pass
 
-    with patch.object(sys, "stdin", FakeStdin()):
-        with patch("builtins.input", lambda prompt: f"{prompt}value"):
-            assert read_line("P> ") == "P> value"
+    with (
+        patch.object(sys, "stdin", FakeStdin()),
+        patch("builtins.input", lambda prompt: f"{prompt}value"),
+    ):
+        assert read_line("P> ") == "P> value"
 
     buf = EditBuffer("abc")
     buf.left()
@@ -388,9 +394,11 @@ def test_read_line_tty_uses_prompt_toolkit_session():
             return "中间插入后删除"
 
     fake_session = FakeSession()
-    with patch.object(sys, "stdin", FakeStdin()):
-        with patch("cli.line_editor._get_prompt_session", lambda: fake_session):
-            assert read_line("你> ") == "中间插入后删除"
+    with (
+        patch.object(sys, "stdin", FakeStdin()),
+        patch("cli.line_editor._get_prompt_session", lambda: fake_session),
+    ):
+        assert read_line("你> ") == "中间插入后删除"
 
     assert fake_session.prompts == ["你> "]
     print("✓ line_editor: TTY uses prompt_toolkit session ok")

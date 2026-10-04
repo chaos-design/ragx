@@ -157,8 +157,7 @@ def _expand_aliases(terms: Iterable[str]) -> Iterable[str]:
     """扩展少量领域术语别名，补齐中文 query 与英文文件名的 metadata 匹配。"""
     for term in terms:
         yield term
-        for alias in _TERM_ALIASES.get(term, ()):
-            yield alias
+        yield from _TERM_ALIASES.get(term, ())
 
 
 def _is_query_noise(term: str) -> bool:

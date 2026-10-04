@@ -346,17 +346,28 @@ def _unique_paths(paths: tuple[Path, ...]) -> tuple[Path, ...]:
 def ensure_real_provider(cfg: Settings) -> None:
     """确保生产入口不会静默使用测试 provider。
 
+    mock 是**双开关**显式 opt-in：既要把 `RAG_PROVIDER` 设为 mock，
+    还要把 `RAG_ALLOW_MOCK_PROVIDER` 设为真值。两个条件缺一不可，
+    这样「误把 mock 带上生产」需要两次独立疏忽，概率远低于单开关。
+
     输入 (Input):
         cfg: Settings 实例。
 
     输出 (Output):
-        None。若 provider 为测试配置则抛 ValueError。
+        None。若 provider 为 mock 且未显式放行则抛 ValueError。
 
     示例 (Example):
         ensure_real_provider(load_settings())
     """
-    if cfg.provider.lower().strip() == "mock":
-        raise ValueError(
-            "生产运行禁止使用测试 provider；请设置 RAG_PROVIDER=openai/custom "
-            "并提供 OPENAI_API_KEY。"
-        )
+    if cfg.provider.lower().strip() != "mock":
+        return
+    if _bool_env("RAG_ALLOW_MOCK_PROVIDER", default=False):
+        return
+    raise ValueError(
+        "生产运行禁止使用测试 provider；请设置 RAG_PROVIDER=openai/custom "
+        "并提供 OPENAI_API_KEY。\n"
+        "若仅用于离线验证链路连通性（产物不可用于生产），"
+        "需同时设置两个开关：\n"
+        "  export RAG_PROVIDER=mock\n"
+        "  export RAG_ALLOW_MOCK_PROVIDER=1"
+    )

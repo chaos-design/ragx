@@ -9,10 +9,9 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-import ragx_cli  # noqa: E402
-from config.settings import Settings  # noqa: E402
-from rag import entrypoints  # noqa: E402
-
+import ragx_cli
+from config.settings import Settings
+from rag import entrypoints
 
 DOC = (
     "# RAGX 模块化入口\n\n"

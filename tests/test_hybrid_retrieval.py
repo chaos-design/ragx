@@ -3,19 +3,18 @@ from __future__ import annotations
 
 import os
 import sys
-from pathlib import Path
 
 import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag.interfaces import Document, ScoredDocument  # noqa: E402
-from rag.retrieval.fusion import (  # noqa: E402
+from config.settings import Settings
+from rag.interfaces import Document, ScoredDocument
+from rag.retrieval.fusion import (
     FusionConfig,
     reciprocal_rank_fusion,
 )
-from rag.retrieval.hybrid import HybridRetriever  # noqa: E402
+from rag.retrieval.hybrid import HybridRetriever
 
 
 def _hit(

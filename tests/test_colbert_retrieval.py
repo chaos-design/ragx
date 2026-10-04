@@ -9,9 +9,9 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag.interfaces import Document, ScoredDocument  # noqa: E402
-from rag.retrieval.colbert import (  # noqa: E402
+from config.settings import Settings
+from rag.interfaces import Document, ScoredDocument
+from rag.retrieval.colbert import (
     ColBERTEncoder,
     ColBERTRerankConfig,
     ColBERTReranker,
@@ -19,7 +19,7 @@ from rag.retrieval.colbert import (  # noqa: E402
     TransformersColBERTEncoder,
     rank_by_colbert,
 )
-from rag.retrieval.reranker import (  # noqa: E402
+from rag.retrieval.reranker import (
     NoOpReranker,
     build_reranker,
     normalize_reranker_backend,

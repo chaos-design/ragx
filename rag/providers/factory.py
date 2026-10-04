@@ -10,20 +10,28 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 try:  # pragma: no cover - 取决于运行环境是否安装了共享包
     from agent_provider import (
         ChatMessage,
         ProviderInitError,
+    )
+    from agent_provider import (
         build_embedding_provider as _agent_build_embedding_provider,
+    )
+    from agent_provider import (
         build_llm_provider as _agent_build_llm_provider,
     )
 except ImportError:  # pragma: no cover - 独立运行时的正常路径
     from rag.providers._fallback import (
         ChatMessage,
         ProviderInitError,
+    )
+    from rag.providers._fallback import (
         build_embedding_provider as _agent_build_embedding_provider,
+    )
+    from rag.providers._fallback import (
         build_llm_provider as _agent_build_llm_provider,
     )
 
@@ -72,8 +80,8 @@ class LLMProviderLike(Protocol):
         ...
 
 
-EmbeddingBuilder = Callable[[Optional[Any]], EmbeddingProviderLike]
-LLMBuilder = Callable[[Optional[Any]], LLMProviderLike]
+EmbeddingBuilder = Callable[[Any | None], EmbeddingProviderLike]
+LLMBuilder = Callable[[Any | None], LLMProviderLike]
 
 
 @dataclass(frozen=True)

@@ -10,10 +10,9 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from config.settings import Settings  # noqa: E402
-from rag import app as rag_app  # noqa: E402
-from scripts import build_knowledge_base as builder  # noqa: E402
-
+from config.settings import Settings
+from rag import app as rag_app
+from scripts import build_knowledge_base as builder
 
 DOC = (
     "# RAGX 知识库\n\n"

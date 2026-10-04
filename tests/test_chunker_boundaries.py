@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.ingestion.chunker import (  # noqa: E402
+from rag.ingestion.chunker import (
     BlockType,
     ChunkPolicy,
     StructureAwareChunker,
@@ -33,7 +33,7 @@ def test_text_chunks_split_by_sentence_with_overlap():
 
 
 def test_code_chunks_split_on_function_boundaries():
-    code = "\n".join(
+    code = "\n".join(  # noqa: FLY002 - 多行字面量列表 join 比巨型 f-string 更易读
         [
             "def first():",
             "    return 'alpha'",

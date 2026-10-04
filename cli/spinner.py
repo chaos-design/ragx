@@ -15,10 +15,11 @@ import itertools
 import sys
 import threading
 import time
+from typing import ClassVar
 
 
 class Spinner:
-    FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+    FRAMES: ClassVar[list[str]] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 
     def __init__(self, text: str = "AI 思考中", interval: float = 0.08) -> None:
         self._text = text
@@ -35,7 +36,7 @@ class Spinner:
             sys.stdout.flush()
             time.sleep(self._interval)
 
-    def start(self) -> "Spinner":
+    def start(self) -> Spinner:
         if not self._tty:
             sys.stdout.write(f"{self._text}…\n")  # 非交互环境只提示一次
             sys.stdout.flush()
@@ -55,8 +56,9 @@ class Spinner:
             sys.stdout.write("\r\x1b[K")  # 清除 loading 行
             sys.stdout.flush()
 
-    def __enter__(self) -> "Spinner":
-        return self.start()
+    def __enter__(self) -> Spinner:  # noqa: PYI034 - Spinner 无子类，Self 无额外收益
+        self.start()
+        return self
 
     def __exit__(self, *exc) -> None:
         self.stop()

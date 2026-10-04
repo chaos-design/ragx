@@ -17,15 +17,18 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 try:  # 优先共享包，缺失时降级到本地 fallback
-    from agent_provider import build_embedding_provider, build_llm_provider  # noqa: E402
+    from agent_provider import (
+        build_embedding_provider,
+        build_llm_provider,
+    )
 except ImportError:  # pragma: no cover - 独立运行时的正常路径
-    from rag.providers._fallback import (  # noqa: E402
+    from rag.providers._fallback import (
         build_embedding_provider,
         build_llm_provider,
     )
 
-from config.settings import ensure_real_provider, load_settings  # noqa: E402
-from rag.interfaces import ChatMessage  # noqa: E402
+from config.settings import ensure_real_provider, load_settings
+from rag.interfaces import ChatMessage
 
 
 def main() -> int:

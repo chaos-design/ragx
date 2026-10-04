@@ -3,26 +3,27 @@
 本模块只定义抽象基类(ABC)与数据结构(DTO)，不包含任何具体实现。
 所有上层模块仅依赖这里的抽象，从而实现「依赖倒置 / 高内聚低耦合」。
 
-依赖关系：Provider 抽象来自共享 `agent_provider` 包，其余流程接口保留在本文件。
+依赖关系：Provider 抽象优先来自共享 `agent_provider` 包；该包缺失时降级到
+`rag.providers._fallback`，保证本仓库可独立导入。
 """
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
-from typing import Iterable, Sequence
 
+# EmbeddingProvider / LLMProvider 在本模块不被直接引用，属于纯再导出，
+# 用 PEP 484 的 `X as X` 显式声明 re-export 意图（ruff PLC0414 不识别该约定）。
 try:  # pragma: no cover - 取决于运行环境是否安装了共享包
-    from agent_provider import (
-        ChatMessage as ChatMessage,
-        EmbeddingProvider as EmbeddingProvider,
-        LLMProvider as LLMProvider,
-    )
+    from agent_provider import ChatMessage
+    from agent_provider import EmbeddingProvider as EmbeddingProvider  # noqa: PLC0414
+    from agent_provider import LLMProvider as LLMProvider  # noqa: PLC0414
 except ImportError:  # pragma: no cover - 独立运行时的正常路径
+    from rag.providers._fallback import ChatMessage
     from rag.providers._fallback import (
-        ChatMessage as ChatMessage,
-        EmbeddingProvider as EmbeddingProvider,
-        LLMProvider as LLMProvider,
+        EmbeddingProvider as EmbeddingProvider,  # noqa: PLC0414
     )
+    from rag.providers._fallback import LLMProvider as LLMProvider  # noqa: PLC0414
 
 
 # --------------------------------------------------------------------------- #

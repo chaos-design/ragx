@@ -56,8 +56,38 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as exc:  # noqa: BLE001 - CLI 边界负责转换为清晰错误。
         print(f"[ragx] failed: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
+    _warn_if_mock_provider()
     print_result(result, as_json=args.as_json)
     return 0
+
+
+def _warn_if_mock_provider() -> None:
+    """在使用了 mock provider 时输出醒目警告。
+
+    mock 是显式 opt-in，但 opt-in 不等于「用户知道自己拿到了假答案」。
+    检索链路真实工作、生成环节返回占位文本，这种组合最容易让人误判系统可用，
+    因此必须在唯一的 CLI 出口无条件提示。
+
+    Example Input:
+        _warn_if_mock_provider()
+
+    Example Output:
+        stderr: [ragx] 警告：当前使用 mock provider ...
+    """
+    from config.settings import load_settings
+
+    try:
+        cfg = load_settings()
+    except Exception:  # noqa: BLE001 - 警告失败不应影响主流程。
+        return
+    if cfg.provider.lower().strip() != "mock":
+        return
+    message = (
+        "[ragx] 警告：当前使用 mock provider —— 检索链路真实执行，"
+        "但 embedding 与生成均为本地确定性桩，产物不可用于生产。"
+    )
+    # 无论是否 --json，警告都只走 stderr，避免污染 JSON 输出契约。
+    print(message, file=sys.stderr)
 
 
 def dispatch(args: argparse.Namespace) -> dict[str, Any]:
@@ -464,10 +494,10 @@ def _print_run_result(result: dict[str, Any]) -> None:
         None
     """
     _print_index_result(result["index"])
-    print("")
+    print()
     _print_query_result(result["query"])
     if result.get("evaluation"):
-        print("")
+        print()
         _print_evaluation_result(result["evaluation"])
 
 

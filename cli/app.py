@@ -15,7 +15,7 @@
 """
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 from cli.rag_service import ChatService
 from cli.rendering import ChatRenderer
@@ -41,7 +41,7 @@ class ChatCLI:
             read_line = _rl
         if spinner_factory is None:
             from cli.spinner import Spinner
-            spinner_factory = lambda text: Spinner(text)  # noqa: E731
+            spinner_factory = lambda text: Spinner(text)
         self._chat = chat
         self._read_line = read_line
         self._spinner_factory = spinner_factory

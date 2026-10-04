@@ -14,28 +14,27 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.ingestion.loader import (  # noqa: E402
+from rag.ingestion.chunker import Block, BlockType
+from rag.ingestion.loader import (
     TextFileLoader,
     read_source_documents,
 )
-from rag.ingestion.chunker import Block, BlockType  # noqa: E402
-from rag.ingestion.loader.pdf import (  # noqa: E402
+from rag.ingestion.loader.pdf import (
     _call_paddle_ocr,
     _create_paddle_ocr,
     _extract_paddle_text,
     _format_pdf_page,
+    _normalize_pdf_text,
     _ocr_lang,
     _ocr_matrix,
     _ocr_pdf_page,
     _ocr_threshold,
-    _normalize_pdf_text,
     _paddle_ocr_client,
     _paddle_runtime_dependency_message,
     _prepare_ocr_image,
     _run_paddle_ocr,
     read_pdf,
 )
-
 
 DOCX_XML = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -294,17 +293,19 @@ def test_ocr_pdf_page_retries_with_preprocessed_image(tmp_path: Path):
     prepared = tmp_path / "prepared.png"
     prepared.write_text("prepared", encoding="utf-8")
 
-    with patch("rag.ingestion.loader.pdf._paddle_ocr_client", return_value=object()):
-        with patch("rag.ingestion.loader.pdf._ocr_matrix", return_value=object()):
-            with patch(
-                "rag.ingestion.loader.pdf._prepare_ocr_image",
-                return_value=str(prepared),
-            ):
-                with patch(
-                    "rag.ingestion.loader.pdf._run_paddle_ocr",
-                    side_effect=["", "prepared text"],
-                ) as run:
-                    text = _ocr_pdf_page(FakePage(), Path("scan.pdf"), 1)
+    with (
+        patch("rag.ingestion.loader.pdf._paddle_ocr_client", return_value=object()),
+        patch("rag.ingestion.loader.pdf._ocr_matrix", return_value=object()),
+        patch(
+            "rag.ingestion.loader.pdf._prepare_ocr_image",
+            return_value=str(prepared),
+        ),
+        patch(
+            "rag.ingestion.loader.pdf._run_paddle_ocr",
+            side_effect=["", "prepared text"],
+        ) as run,
+    ):
+        text = _ocr_pdf_page(FakePage(), Path("scan.pdf"), 1)
 
     assert text == "prepared text"
     assert run.call_count == 2

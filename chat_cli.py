@@ -24,14 +24,14 @@ sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 try:  # 优先共享包，缺失时降级到本地 fallback
-    from agent_provider import ProviderInitError  # noqa: E402
+    from agent_provider import ProviderInitError
 except ImportError:  # pragma: no cover - 独立运行时的正常路径
-    from rag.providers._fallback import ProviderInitError  # noqa: E402
+    from rag.providers._fallback import ProviderInitError
 
-from cli.app import ChatCLI  # noqa: E402
-from cli.rag_service import EchoChatService, RagChatService  # noqa: E402
-from cli.rendering import ChatRenderer  # noqa: E402
-from cli.session import Session  # noqa: E402
+from cli.app import ChatCLI
+from cli.rag_service import EchoChatService, RagChatService
+from cli.rendering import ChatRenderer
+from cli.session import Session
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -205,7 +205,7 @@ def _exception_attr(exc: Exception, name: str) -> Any:
     """
     try:
         return getattr(exc, name)
-    except Exception:
+    except Exception:  # noqa: BLE001 - 探测可选属性，任何异常都等价于「该属性不可用」
         return None
 
 
@@ -262,7 +262,7 @@ def _provider_config_diagnostics() -> str:
         from config.settings import load_settings
 
         cfg = load_settings()
-    except Exception:
+    except Exception:  # noqa: BLE001 - 仅用于补充提示信息，配置读取失败不应中断 CLI
         return ""
     endpoint = str(getattr(cfg, "endpoint", "") or "").rstrip("/")
     embedding_endpoint = getattr(cfg, "embedding_endpoint", None)

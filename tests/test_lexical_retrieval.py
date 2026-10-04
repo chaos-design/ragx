@@ -6,8 +6,8 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.interfaces import Document  # noqa: E402
-from rag.retrieval.lexical import (  # noqa: E402
+from rag.interfaces import Document
+from rag.retrieval.lexical import (
     LexicalDocumentStore,
     LexicalRetriever,
     _tokenize,

@@ -7,15 +7,15 @@ from types import SimpleNamespace
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.ingestion.chunker import Block, BlockType, StructureAwareChunker  # noqa: E402
-from rag.ingestion.layout import (  # noqa: E402
+from rag.ingestion.chunker import Block, BlockType, StructureAwareChunker
+from rag.ingestion.layout import (
     LayoutAwareChunker,
     MarkdownLayoutAnalyzer,
     ModelLayoutAnalyzer,
     PdfTextLayoutAnalyzer,
-    _PdfTextBlock,
     _detect_columns,
     _page_width,
+    _PdfTextBlock,
     _sort_pdf_blocks_by_reading_order,
     _valid_bbox,
     analyze_pdf_text_page,

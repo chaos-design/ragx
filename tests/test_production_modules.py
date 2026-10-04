@@ -6,12 +6,15 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rag.embedding.service import EmbeddingService          # noqa: E402
-from rag.ingestion.chunker import ChunkPolicy, StructureAwareChunker  # noqa: E402
-from rag.ingestion.sync import IncrementalSyncer            # noqa: E402
-from rag.quality.sampling_qa import (                       # noqa: E402
-    SamplingQA, SampleResult, compute_signal)
-from rag.vectorstore.memory_store import InMemoryVectorStore  # noqa: E402
+from rag.embedding.service import EmbeddingService
+from rag.ingestion.chunker import ChunkPolicy, StructureAwareChunker
+from rag.ingestion.sync import IncrementalSyncer
+from rag.quality.sampling_qa import (
+    SampleResult,
+    SamplingQA,
+    compute_signal,
+)
+from rag.vectorstore.memory_store import InMemoryVectorStore
 
 DOC_V1 = """# 员工手册
 

@@ -6,6 +6,7 @@ import sys
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from types import SimpleNamespace
+from typing import ClassVar
 
 RAGX_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PROJECT_ROOT = os.path.abspath(os.path.join(RAGX_ROOT, ".."))
@@ -14,14 +15,14 @@ for path in (RAGX_ROOT, PROJECT_ROOT):
         sys.path.insert(0, path)
 
 try:  # 优先共享包，缺失时降级到本地 fallback
-    from agent_provider import ProviderInitError  # noqa: E402
+    from agent_provider import ProviderInitError
 except ImportError:  # pragma: no cover - 独立运行时的正常路径
-    from rag.providers._fallback import ProviderInitError  # noqa: E402
+    from rag.providers._fallback import ProviderInitError
 
-import chat_cli  # noqa: E402
-import main as main_module  # noqa: E402
-from cli.rag_service import EchoChatService, RagChatService  # noqa: E402
-from config.settings import Settings  # noqa: E402
+import chat_cli
+import main as main_module
+from cli.rag_service import EchoChatService, RagChatService
+from config.settings import Settings
 
 
 class _Report:
@@ -34,7 +35,7 @@ class _Report:
 
 
 class _FakeRagApplication:
-    instances = []
+    instances: ClassVar[list] = []
 
     def __init__(self, cfg):
         self.cfg = cfg

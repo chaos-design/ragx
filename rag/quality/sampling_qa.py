@@ -98,7 +98,7 @@ class SamplingQA:
             strata[stratify_key(s)].append(s)
 
         chosen: list[PageSignal] = []
-        for _key, items in strata.items():
+        for items in strata.values():
             k = min(len(items), max(self.min_per_stratum,
                                     math.ceil(len(items) * self.sample_ratio)))
             # 一半按健康度从低到高(抓缺陷)，一半随机(估真实分布)

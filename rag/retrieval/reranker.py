@@ -122,15 +122,15 @@ def build_reranker(cfg) -> CandidateReranker:
 
 
 __all__ = [
+    "RERANKER_BACKEND_COLBERT",
+    "RERANKER_BACKEND_CROSS_ENCODER",
+    "RERANKER_BACKEND_NONE",
     "CandidateReranker",
     "CrossEncoderRerankConfig",
     "CrossEncoderReranker",
     "CrossEncoderScorer",
     "HeuristicCrossEncoderScorer",
     "NoOpReranker",
-    "RERANKER_BACKEND_COLBERT",
-    "RERANKER_BACKEND_CROSS_ENCODER",
-    "RERANKER_BACKEND_NONE",
     "build_reranker",
     "normalize_reranker_backend",
     "rank_by_relevance",

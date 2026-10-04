@@ -22,7 +22,7 @@ import json
 import math
 import os
 import sqlite3
-from typing import Sequence
+from collections.abc import Sequence
 
 from rag.interfaces import Document, ScoredDocument, VectorStore
 
