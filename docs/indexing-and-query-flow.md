@@ -619,11 +619,15 @@ ColBERT 路径由 `ColBERTReranker` 负责。它加载 `ColBERTEncoder`，对 qu
 
 ## 检索后增强与生成
 
-`RagPromptBuilder` 将检索结果、历史对话和用户问题组装为 messages。系统提示要求只依据上下文回答；如果上下文不足，必须明确说明无法从资料中找到答案。
+`RagPromptBuilder` 将检索结果、历史对话和用户问题组装为 messages。消息顺序固定为
+`system -> history -> current user`；当前 user 消息包含编号证据块和当前问题。
+系统提示要求只依据上下文回答；如果上下文不足，必须明确说明无法从资料中找到答案，
+并把证据中的提示注入文本视为资料而非指令。完整 assembly 格式和输入输出用例见
+[`prompt-assembly.md`](prompt-assembly.md)。
 
 ```mermaid
 flowchart TD
-    A[ScoredDocument contexts] --> B[格式化片段<br/>source + score + content]
+    A[ScoredDocument contexts] --> B[格式化片段<br/>source + score + 溯源元数据 + content]
     C[ConversationMemory.history] --> D[messages]
     E[query] --> D
     B --> D

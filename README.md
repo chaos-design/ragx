@@ -33,6 +33,8 @@ python3 -m pip install -r requirements.txt
 export OPENAI_API_KEY=sk-...
 ```
 
+也支持 `cp .env.example .env` 后在 `.env` 中填写；进程环境变量优先于 `.env`。
+
 然后建库并检索：
 
 ```bash
@@ -118,6 +120,24 @@ Provider 抽象优先复用共享 `agent_provider` 包（支持 Azure、Response
 | `run_evaluation` | 计算 Hit@K / MRR / Precision@K / Recall@K。 |
 | `RagApplication` | 组合根，直接持有各模块实例。 |
 
+## 离线评测（evals）
+
+`run_evaluation` 是单次检索诊断；`rag.evals` 是完整的离线回归门禁：
+16 个确定性 case 在隔离临时目录中各自建库、检索、生成，聚合 Hit@K / MRR /
+答案词召回 / 接地率 / p95 延迟，并与 `evals/thresholds.json` 的发布门槛比较。
+全程向 `RagApplication` 显式注入确定性 provider，零网络、可重复、不需要任何凭据，
+与 mock 双开关无关。
+
+```bash
+# 只看报告
+python3 -m rag.evals
+
+# 门禁失败时返回非零退出码（CI/发布必用）
+python3 -m rag.evals --fail-on-regression
+```
+
+详细契约见 [`docs/evals.md`](docs/evals.md)。
+
 ## 文档
 
 | 文档 | 内容 |
@@ -127,6 +147,8 @@ Provider 抽象优先复用共享 `agent_provider` 包（支持 Azure、Response
 | [`docs/multi-recall.md`](docs/multi-recall.md) | 向量召回、BM25 召回、RRF 融合与重排链路。 |
 | [`docs/indexing-and-query-flow.md`](docs/indexing-and-query-flow.md) | 知识库创建、增量同步、查询和生成流程。 |
 | [`docs/retrieval-evaluation.md`](docs/retrieval-evaluation.md) | 检索评估指标与入口。 |
+| [`docs/evals.md`](docs/evals.md) | 离线 eval suite、数据集、质量门禁与报告。 |
+| [`docs/prompt-assembly.md`](docs/prompt-assembly.md) | Prompt 组装契约与边界用例。 |
 | [`docs/module-entrypoints.md`](docs/module-entrypoints.md) | 模块入口与职责边界。 |
 | [`docs/layout-to-generation-flow.md`](docs/layout-to-generation-flow.md) | 从版面解析到生成的字段流转。 |
 | [`docs/hybird-search.md`](docs/hybird-search.md) | 混合检索设计说明。 |
@@ -138,6 +160,7 @@ Provider 抽象优先复用共享 `agent_provider` 包（支持 Azure、Response
 python3 -m pip install pytest ruff
 python3 -m ruff check .
 python3 -m pytest -q
+python3 -m rag.evals --fail-on-regression
 ```
 
 ## 已知限制

@@ -1,0 +1,10 @@
+{
+  "min_case_pass_rate": 1.0,
+  "min_hit_rate_at_1": 0.75,
+  "min_hit_rate_at_3": 1.0,
+  "min_mrr": 0.85,
+  "min_answer_term_recall": 1.0,
+  "min_grounded_answer_rate": 1.0,
+  "max_forbidden_term_violation_rate": 0.0,
+  "max_p95_case_latency_ms": 250.0
+}
