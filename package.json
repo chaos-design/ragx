@@ -5,10 +5,10 @@
   "type": "module",
   "description": "RAGX documentation static site (Vite + React, Vercel + GitHub Actions).",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc -b"
+    "dev": "vite -c site/vite.config.ts",
+    "build": "tsc -b site && vite build -c site/vite.config.ts",
+    "preview": "vite preview -c site/vite.config.ts",
+    "typecheck": "tsc -b site"
   },
   "dependencies": {
     "highlight.js": "^11.11.1",

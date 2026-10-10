@@ -6,7 +6,9 @@ import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 
-const repoRoot = fileURLToPath(new URL(".", import.meta.url));
+// This config lives in site/, so the site root is the directory containing it.
+const siteDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(siteDir, "..");
 const docsDir = path.join(repoRoot, "docs");
 
 // Expose every docs/**/*.md file as Record<key, rawMarkdown> through a virtual
@@ -55,7 +57,7 @@ function docsModule(): Plugin {
 // The single self-contained artifact (interview-bank.html) lives inside docs/.
 // Copy it into the build output after Vite has written the bundle.
 function copyArtifacts(): Plugin {
-  let outDir = "site/dist";
+  let outDir = "dist";
   const artifactSrc = path.join(docsDir, "interview-bank.html");
   return {
     name: "ragx-site-copy-artifacts",
@@ -76,6 +78,8 @@ function copyArtifacts(): Plugin {
 }
 
 export default defineConfig({
+  // The Vite root is the site/ directory itself (index.html, src/ live here).
+  root: siteDir,
   // Relative base so the built site works from a Vercel root or a nested
   // directory without a server rewrite; hash routing needs no rewrite either.
   base: "./",
@@ -85,7 +89,7 @@ export default defineConfig({
     port: 5175,
   },
   build: {
-    outDir: "site/dist",
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
