@@ -1,24 +1,21 @@
-# Builds the RAGX documentation static site and deploys it to Vercel.
+# Builds the RAGX documentation static site with GitHub Actions.
 #
 # Flow (single job):
 #   1. install deps   -> npm ci (reproducible, uses the committed lockfile)
 #   2. build          -> npm run build  (tsc -b && vite build -> site/dist)
 #   3. verify output  -> assert the key artifacts exist
-#   4. deploy         -> Vercel CLI, prebuilt, production  (main only)
+#   4. upload artifact-> upload site/dist so it can be previewed / inspected
+#
+# Deployment to Vercel is handled by Vercel's native Git integration — NO
+# Actions secrets are required. On every push to `main`, Vercel reads
+# `vercel.json` (buildCommand + outputDirectory) and builds & deploys
+# `site/dist` automatically. To enable it: in the Vercel dashboard, create a
+# Project and import this GitHub repository (Vercel uses its own GitHub
+# integration token — nothing to store in this repo's secrets).
 #
 # Triggers: push to `main`, any pull request to `main`, and manual dispatch.
-# The deploy step runs ONLY on the `main` branch, so pull requests build and
-# validate the site without needing Vercel secrets.
-#
-# Required GitHub secrets (one-time, repo Settings -> Secrets and variables
-# -> Actions):
-#   - VERCEL_TOKEN       : Vercel -> Account -> Tokens -> create token
-#   - VERCEL_ORG_ID      : Vercel -> your team -> Settings -> Team ID
-#   - VERCEL_PROJECT_ID  : Vercel -> project -> Settings -> Project ID
-#   - (optional) VERCEL_PROJECT_NAME: only needed on the very first deploy
-#     when no project exists yet; lets `vercel pull` create/link it.
 
-name: Deploy docs site to Vercel
+name: Build docs site
 
 on:
   push:
@@ -31,15 +28,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      VERCEL_PROJECT_NAME: ${{ secrets.VERCEL_PROJECT_NAME }}
+permissions:
+  contents: read
 
+jobs:
+  build:
+    name: Build static site
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,23 +61,10 @@ jobs:
           echo "Build output OK:"
           ls -1 site/dist
 
-      # 4. Deploy to Vercel (production) — main branch only.
-      - name: Install Vercel CLI
-        if: github.ref == 'refs/heads/main'
-        run: npm install --no-audit --no-fund -g vercel@latest
-
-      # Pull the project config (org/project, env vars) into .vercel/.
-      - name: Pull Vercel project config
-        if: github.ref == 'refs/heads/main'
-        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
-
-      # Reproduce the exact build inside Vercel's environment (.vercel/output),
-      # so what ships is built the same way Vercel will serve it.
-      - name: Build prebuilt output
-        if: github.ref == 'refs/heads/main'
-        run: vercel build --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
-
-      # Upload the prebuilt artifact to production.
-      - name: Deploy to Vercel (production)
-        if: github.ref == 'refs/heads/main'
-        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" --project="$VERCEL_PROJECT_ID"
+      # 4. Upload the build artifact for preview / inspection.
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dist
+          path: site/dist
+          if-no-files-found: error
