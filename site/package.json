@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "description": "RAGX documentation static site (Vite + React, Vercel + GitHub Actions).",
   "scripts": {
     "dev": "vite",

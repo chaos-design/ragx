@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "cd site && npm install --no-audit --no-fund",
+  "buildCommand": "cd site && npm run build",
+  "outputDirectory": "site/dist",
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/interview-bank.html",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
