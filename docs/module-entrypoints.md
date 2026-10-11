@@ -1,24 +1,21 @@
-# RAGX Modular Entrypoints
+# RAGX 模块入口
 
-This document describes the independent entrypoints for the three core RAGX
-modules: indexing, query processing, and retrieval evaluation. Each module can
-be called through Python Application Programming Interface (API) functions or
-through a single Command-Line Interface (CLI) with subcommands.
+本文档描述 RAGX 三个核心模块（索引构建、Query 处理、检索评估）的独立入口。每个模块既可以通过 Python Application Programming Interface (API，应用程序编程接口) 函数调用，也可以通过一个带子命令的 Command-Line Interface (CLI，命令行接口) 调用。
 
-## Abbreviation Notes
+## 缩写说明
 
-| Abbreviation | Full Name | Note |
+| 缩写 | 全称 | 说明 |
 | --- | --- | --- |
-| API | Application Programming Interface | Python-callable entrypoint contract. |
-| CLI | Command-Line Interface | Shell command wrapper for independent module validation. |
-| JSON | JavaScript Object Notation | Machine-readable output format. |
-| JSONL | JSON Lines | Evaluation dataset format with one JSON object per line. |
-| MRR | Mean Reciprocal Rank | Retrieval ranking metric. |
-| RAG | Retrieval-Augmented Generation | Retrieval-grounded answer generation workflow. |
+| API | Application Programming Interface | Python 可调用的入口契约。 |
+| CLI | Command-Line Interface | 用于独立验证模块的 Shell 命令封装。 |
+| JSON | JavaScript Object Notation | 机器可读的输出格式。 |
+| JSONL | JSON Lines | 每行一个 JSON 对象的评估数据集格式。 |
+| MRR | Mean Reciprocal Rank | 检索排序指标。 |
+| RAG | Retrieval-Augmented Generation | 基于检索证据生成答案的工作流。 |
 
-See [RAGX Abbreviations](abbreviations.md) for the shared glossary.
+完整缩写表见 [RAGX Abbreviations](abbreviations.md)。
 
-## Architecture
+## 架构
 
 ```mermaid
 flowchart TB
@@ -34,21 +31,19 @@ flowchart TB
     API --> EVA[run_evaluation]
     API --> RUN[run_full_pipeline]
 
-    IDX --> Build[Index Build]
-    QRY --> Query[Query + Retrieval + Generation]
+    IDX --> Build[索引构建]
+    QRY --> Query[Query + 检索 + 生成]
     EVA --> Metrics[MRR / Hit@K / Precision@K / Recall@K]
     RUN --> Build
     RUN --> Query
     RUN --> Metrics
 ```
 
-The entrypoint layer only handles configuration overrides, parameter validation,
-report formatting, and resource cleanup. The core Retrieval-Augmented Generation
-(RAG) behavior remains in `RagApplication`.
+入口层只负责配置覆盖、参数校验、报告格式化和资源清理。核心的 Retrieval-Augmented Generation (RAG，检索增强生成) 行为仍然保留在 `RagApplication` 中。
 
-## CLI Usage
+## CLI 用法
 
-Run commands from `agent-library/ragx`:
+在 `agent-library/ragx` 目录下运行：
 
 ```bash
 python ragx_cli.py index --source data/resources --reset
@@ -57,7 +52,7 @@ python ragx_cli.py evaluate --query "RAGX 如何构建索引？" --relevant-sour
 python ragx_cli.py run "RAGX 如何构建索引？" --source data/resources --evaluate
 ```
 
-Run commands from `agent-library`:
+在 `agent-library` 目录下运行：
 
 ```bash
 python ragx/ragx_cli.py index --source ragx/data/resources --reset
@@ -66,13 +61,13 @@ python ragx/ragx_cli.py evaluate --query "RAGX 如何构建索引？" --relevant
 python ragx/ragx_cli.py run "RAGX 如何构建索引？" --source ragx/data/resources --evaluate
 ```
 
-All subcommands support `--json` for machine-readable output.
+所有子命令都支持 `--json` 参数以输出机器可读结果。
 
-## Index Module
+## 索引模块
 
-Purpose: build the SQLite vector store and manifest independently.
+用途：独立构建 SQLite 向量库和 manifest。
 
-CLI:
+CLI：
 
 ```bash
 python ragx_cli.py index \
@@ -83,7 +78,7 @@ python ragx_cli.py index \
   --json
 ```
 
-API:
+API：
 
 ```python
 from rag.entrypoints import run_index
@@ -96,18 +91,18 @@ result = run_index(
 )
 ```
 
-Validation signals:
+校验信号：
 
-- `report.added`, `report.updated`, `report.skipped` confirm sync behavior.
-- `chunk_count > 0` confirms chunks were persisted.
-- `storage.store_exists` and `storage.manifest_exists` confirm storage creation.
-- `count_sqlite_chunks(sqlite_path)` can independently verify loadable rows.
+- `report.added`、`report.updated`、`report.skipped` 确认同步行为。
+- `chunk_count > 0` 确认 chunk 已持久化。
+- `storage.store_exists` 和 `storage.manifest_exists` 确认存储已创建。
+- `count_sqlite_chunks(sqlite_path)` 可独立验证可加载的行数。
 
-## Query Module
+## Query 模块
 
-Purpose: load an existing index, retrieve evidence, and generate an answer.
+用途：加载已有索引，检索证据并生成答案。
 
-CLI:
+CLI：
 
 ```bash
 python ragx_cli.py query "RAGX 如何构建索引？" \
@@ -118,7 +113,7 @@ python ragx_cli.py query "RAGX 如何构建索引？" \
   --json
 ```
 
-API:
+API：
 
 ```python
 from rag.entrypoints import run_query
@@ -133,18 +128,18 @@ result = run_query(
 )
 ```
 
-Validation signals:
+校验信号：
 
-- `answer` confirms generation executed.
-- `contexts` confirms retrieval evidence was returned.
-- `context_count <= top_k` confirms the query entrypoint controls evidence count.
-- `reranker_backend` confirms whether Cross-Encoder, ColBERT, or no-op reranking was used.
+- `answer` 确认生成已执行。
+- `contexts` 确认返回了检索证据。
+- `context_count <= top_k` 确认 query 入口控制了证据数量。
+- `reranker_backend` 确认使用的是 Cross-Encoder、ColBERT 还是无重排。
 
-## Evaluation Module
+## 评估模块
 
-Purpose: evaluate retrieval quality without invoking answer generation.
+用途：只评估检索质量，不触发答案生成。
 
-Single-query CLI:
+单条 query 的 CLI：
 
 ```bash
 python ragx_cli.py evaluate \
@@ -154,20 +149,20 @@ python ragx_cli.py evaluate \
   --json
 ```
 
-JSONL dataset format:
+JSONL 数据集格式：
 
 ```json
 {"query": "RAGX 如何构建索引？", "relevant_sources": ["rag-sample.md"]}
 {"query": "混合检索如何融合结果？", "relevant_doc_ids": ["hybird-search.md"]}
 ```
 
-Dataset CLI:
+数据集 CLI：
 
 ```bash
 python ragx_cli.py evaluate --dataset eval.jsonl --top-k-values 1,3,5 --json
 ```
 
-API:
+API：
 
 ```python
 from rag.entrypoints import run_evaluation
@@ -179,17 +174,17 @@ result = run_evaluation(
 )
 ```
 
-Validation signals:
+校验信号：
 
-- `reports[].mrr` confirms MRR calculation.
-- `reports[].hit_at_k`, `precision_at_k`, and `recall_at_k` confirm K-based metrics.
-- `summary.average_mrr` and `summary.hit_rate_at_k` confirm batch aggregation.
+- `reports[].mrr` 确认 MRR 计算。
+- `reports[].hit_at_k`、`precision_at_k` 和 `recall_at_k` 确认基于 K 的指标。
+- `summary.average_mrr` 和 `summary.hit_rate_at_k` 确认批量聚合。
 
-## Full Pipeline
+## 完整流水线
 
-Purpose: compose the three modules while preserving independent entrypoints.
+用途：把三个模块组合起来，同时保留独立入口。
 
-CLI:
+CLI：
 
 ```bash
 python ragx_cli.py run "RAGX 如何构建索引？" \
@@ -200,7 +195,7 @@ python ragx_cli.py run "RAGX 如何构建索引？" \
   --json
 ```
 
-API:
+API：
 
 ```python
 from rag.entrypoints import run_full_pipeline
@@ -214,10 +209,9 @@ result = run_full_pipeline(
 )
 ```
 
-The returned payload contains independent `index`, `query`, and optional
-`evaluation` sections, so each stage can be asserted separately in tests.
+返回的 payload 包含独立的 `index`、`query` 和可选的 `evaluation` 部分，测试中可以分别对每个阶段进行断言。
 
-## Verification Commands
+## 验证命令
 
 ```bash
 python -m ruff check rag/entrypoints.py ragx_cli.py tests/test_module_entrypoints.py

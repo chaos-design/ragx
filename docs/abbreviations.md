@@ -1,11 +1,9 @@
-# RAGX Abbreviations
+# RAGX 缩写表
 
-This glossary defines abbreviations used across the RAGX documentation. When an
-abbreviation appears in a document, the first occurrence should use the format
-`Full Name (ABBR)` unless the term is already defined in the local abbreviation
-table.
+本缩写表定义 RAGX 文档中使用的缩写。当某个缩写出现在文档中时，首次出现应使用
+`全称 (ABBR)` 的格式，除非该文档的本地缩写表中已有定义。
 
-| Abbreviation | Full Name | Chinese Note |
+| 缩写 | 全称 | 说明 |
 | --- | --- | --- |
 | ACL | Access Control List | 访问控制列表，用于权限过滤。 |
 | API | Application Programming Interface | 应用程序编程接口。 |
@@ -29,7 +27,7 @@ table.
 | SQL | Structured Query Language | 结构化查询语言。 |
 | WAL | Write-Ahead Logging | SQLite 预写日志文件。 |
 
-## Version Notes
+## 版本说明
 
-- PaddleOCR latest version verified from PyPI: `3.7.0`.
-- The current loader keeps compatibility with PaddleOCR v2 and v3 result shapes.
+- PaddleOCR 从 PyPI 验证到的最新版本：`3.7.0`。
+- 当前 loader 保持对 PaddleOCR v2 和 v3 结果结构的兼容。
