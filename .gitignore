@@ -26,3 +26,8 @@ south-chunks.json
 
 # ---- 系统文件 ----
 .DS_Store
+
+# ---- 文档静态站点（Vite + React + Vercel） ----
+node_modules/
+site/dist/
+.vercel/
