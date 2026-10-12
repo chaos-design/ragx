@@ -18,24 +18,16 @@ export function Sidebar({ route }: { route: Route }) {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-scroll">
-        <div className="brand">
-          <div className="brand-mark">R</div>
-          <div>
-            <div className="brand-name">RAGX</div>
-            <div className="brand-sub">{t.brandSub}</div>
-          </div>
-          <button
-            type="button"
-            className="lang-toggle"
-            onClick={() => setLang(nextLang(lang))}
-            title={t.langTitle}
-            aria-label={t.langTitle}
-          >
-            {t.langLabel}
-          </button>
+      {/* 顶部固定 header：不随菜单滚动 */}
+      <div className="brand">
+        <div className="brand-mark">R</div>
+        <div>
+          <div className="brand-name">RAGX</div>
+          <div className="brand-sub">{t.brandSub}</div>
         </div>
+      </div>
 
+      <div className="sidebar-scroll">
         <nav className="nav-group">
           <div className="nav-label">{t.navigate}</div>
           <a href={ROUTES.home} className={`nav-item ${activeKind === "home" ? "active" : ""}`}>
@@ -80,12 +72,22 @@ export function Sidebar({ route }: { route: Route }) {
         </div>
       </div>
 
+      {/* 底部固定：GitHub 与语言切换放在一起 */}
       <div className="sidebar-github">
         <a href={GITHUB_REPO} target="_blank" rel="noreferrer">
           {githubIcon}
           <span>GitHub</span>
           <span className="ext-arrow">↗</span>
         </a>
+        <button
+          type="button"
+          className="lang-toggle"
+          onClick={() => setLang(nextLang(lang))}
+          title={t.langTitle}
+          aria-label={t.langTitle}
+        >
+          {t.langLabel}
+        </button>
       </div>
     </aside>
   );
