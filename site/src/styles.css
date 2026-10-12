@@ -195,23 +195,6 @@ a:hover {
   color: var(--blue);
 }
 
-.sidebar-foot {
-  margin-top: 28px;
-  padding: 14px 10px;
-  border-top: 1px solid var(--line);
-  font-size: 11.5px;
-  color: var(--faint);
-  line-height: 1.6;
-}
-.sidebar-foot code {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted);
-  background: var(--surface-2);
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-
 /* ===== Content ===== */
 .content {
   min-height: 100vh;

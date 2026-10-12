@@ -69,10 +69,6 @@ export function Sidebar({ route }: { route: Route }) {
             </a>
           ))}
         </div>
-
-        <div className="sidebar-foot">
-          文档与产物在构建时内联打包；GitHub Actions 构建后经 Vercel 部署 <code>site/dist</code>。
-        </div>
       </div>
 
       <div className="sidebar-github">

@@ -1,33 +1,4 @@
-import { docCatalog } from "./docs";
-import { GITHUB_REPO, ROUTES, type Route } from "./routes";
-
-// The bottom bar's "文档" entry jumps to the first doc in reading order.
-function firstDocSlug(): string {
-  const s = docCatalog.sections[0]?.items[0]?.slug;
-  return s ?? Object.keys(docCatalog.index)[0] ?? "module-entrypoints";
-}
-
-const homeIcon = (
-  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-    <path d="M2 7.6 8 2l6 5.6h-1.6V14H10v-3.4h-4V14H3.6V7.6H2z" />
-  </svg>
-);
-
-const docIcon = (
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-    <path d="M3.5 2h5.6L12 4.9V14H3.5V2z" />
-    <path d="M9 2v3.2H12" />
-  </svg>
-);
-
-const artifactIcon = (
-  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-    <rect x="2" y="2" width="5" height="5" rx="1" />
-    <rect x="9" y="2" width="5" height="5" rx="1" />
-    <rect x="2" y="9" width="5" height="5" rx="1" />
-    <rect x="9" y="9" width="5" height="5" rx="1" />
-  </svg>
-);
+import { GITHUB_REPO } from "./routes";
 
 const githubIcon = (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -35,28 +6,11 @@ const githubIcon = (
   </svg>
 );
 
-export function BottomBar({ route }: { route: Route }) {
-  const activeHome = route.kind === "home";
-  const activeDoc = route.kind === "doc";
-  const activeArtifact = route.kind === "artifact" || route.kind === "gallery";
-
+// Persistent GitHub entry. Shown as a full-width 吸底 bar on mobile; on desktop
+// the same entry lives in the pinned sidebar footer, so this is hidden there.
+export function BottomBar() {
   return (
-    <nav className="bottombar" aria-label="内容切换菜单">
-      <a href={ROUTES.home} className={`bottombar-item ${activeHome ? "active" : ""}`}>
-        {homeIcon}
-        <span>首页</span>
-      </a>
-      <a href={ROUTES.doc(firstDocSlug())} className={`bottombar-item ${activeDoc ? "active" : ""}`}>
-        {docIcon}
-        <span>文档</span>
-      </a>
-      <a
-        href={ROUTES.gallery}
-        className={`bottombar-item ${activeArtifact ? "active" : ""}`}
-      >
-        {artifactIcon}
-        <span>产物</span>
-      </a>
+    <nav className="bottombar" aria-label="GitHub">
       <a href={GITHUB_REPO} target="_blank" rel="noreferrer" className="bottombar-item external">
         {githubIcon}
         <span>GitHub</span>
