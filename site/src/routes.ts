@@ -35,6 +35,9 @@ export const ROUTES = {
   artifact: (slug: string) => `#/artifact/${slug}`,
 } as const;
 
+/** External repository link (the GitHub entry surfaced in the bottom bar). */
+export const GITHUB_REPO = "https://github.com/chaos-design/ragx";
+
 export function navigate(route: string): void {
   window.location.hash = route;
 }
