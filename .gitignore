@@ -27,6 +27,10 @@ south-chunks.json
 # ---- 系统文件 ----
 .DS_Store
 
+# ---- 本地助手工作目录（不入库） ----
+.codebuddy/
+.workbuddy/
+
 # ---- 文档静态站点（Vite + React + Vercel） ----
 node_modules/
 site/dist/

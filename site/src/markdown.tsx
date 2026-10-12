@@ -189,7 +189,7 @@ export async function renderMarkdown(markdown: string, fromSlug: string): Promis
   // concurrent document renders cannot collide on mermaid's DOM ids).
   for (const { mid, def } of mermaids) {
     let replacement =
-      '<div class="mermaid-diagram"><div class="mermaid-fallback">图表渲染失败</div></div>';
+      '<div class="mermaid-diagram"><div class="mermaid-fallback">图表渲染失败 / Diagram failed to render</div></div>';
     try {
       const svg = await renderMermaid(def);
       if (svg) {
