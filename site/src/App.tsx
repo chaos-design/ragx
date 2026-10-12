@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { BottomBar } from "./BottomBar";
 import { ArtifactView } from "./ArtifactView";
 import { DocView } from "./DocView";
 import { Gallery } from "./Gallery";
@@ -32,6 +33,7 @@ function Shell() {
     <div className="shell">
       <Sidebar route={route} />
       <main className="content">{view}</main>
+      <BottomBar />
     </div>
   );
 }
