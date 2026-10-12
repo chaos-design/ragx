@@ -55,8 +55,6 @@ const STRINGS = {
       </>
     ),
     backHome: "返回首页",
-    rendering: "渲染中…",
-    loading: "加载中…",
     tocTitle: "本页目录",
     pagerPrev: "← 上一篇",
     pagerNext: "下一篇 →",
@@ -130,8 +128,6 @@ const STRINGS = {
       </>
     ),
     backHome: "Back to home",
-    rendering: "Rendering…",
-    loading: "Loading…",
     tocTitle: "On this page",
     pagerPrev: "← Previous",
     pagerNext: "Next →",

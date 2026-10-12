@@ -627,34 +627,19 @@ a:hover {
   font-size: 13px;
 }
 
-/* ===== Content loading: doc markdown render + artifact iframe ===== */
+/* ===== Content loading: shimmering skeleton (doc render + artifact iframe) ===== */
 .content-loading {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
   min-height: 240px;
   padding: 20px 0;
-}
-.content-loading-text {
-  color: var(--faint);
-  font-size: 13px;
-}
-.spinner {
-  flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--line);
-  border-top-color: var(--blue);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
 }
 .skeleton {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 12px;
 }
 .skeleton span {
   display: block;
@@ -669,11 +654,6 @@ a:hover {
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 @keyframes shimmer {
   0% {
     background-position: 200% 0;
@@ -682,7 +662,7 @@ a:hover {
     background-position: -200% 0;
   }
 }
-/* Spinner overlay shown above the artifact iframe while it is still loading. */
+/* Skeleton overlay shown above the artifact iframe while it is still loading. */
 .artifact-frame-wrap {
   position: relative;
 }
@@ -691,21 +671,16 @@ a:hover {
   inset: 0;
   z-index: 2;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
-.frame-loading .spinner {
-  width: 28px;
-  height: 28px;
-  border-width: 3px;
+.frame-loading .skeleton {
+  width: 72%;
 }
 @media (prefers-reduced-motion: reduce) {
-  .spinner,
   .skeleton span {
     animation: none;
   }

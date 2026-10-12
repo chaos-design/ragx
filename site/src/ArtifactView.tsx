@@ -65,9 +65,13 @@ export function ArtifactView({ slug }: { slug: string }) {
             onLoad={() => setFrameLoaded(true)}
           />
           {!frameLoaded ? (
-            <div className="frame-loading" role="status" aria-live="polite">
-              <span className="spinner" aria-hidden="true" />
-              <span className="content-loading-text">{t.loading}</span>
+            <div className="frame-loading">
+              <div className="skeleton" aria-hidden="true">
+                <span style={{ width: "45%" }} />
+                <span />
+                <span style={{ width: "90%" }} />
+                <span style={{ width: "78%" }} />
+              </div>
             </div>
           ) : null}
         </div>
