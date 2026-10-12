@@ -7,6 +7,7 @@ export function ArtifactView({ slug }: { slug: string }) {
   const { t } = useLang();
   const artifact = getArtifact(slug);
   const [immersive, setImmersive] = useState(false);
+  const [frameLoaded, setFrameLoaded] = useState(false);
 
   // Esc exits immersive mode.
   useEffect(() => {
@@ -55,12 +56,21 @@ export function ArtifactView({ slug }: { slug: string }) {
       </div>
 
       {!immersive ? (
-        <iframe
-          key={artifact.slug}
-          className="artifact-frame"
-          src={artifact.file}
-          title={artifact.title}
-        />
+        <div className="artifact-frame-wrap">
+          <iframe
+            key={artifact.slug}
+            className="artifact-frame"
+            src={artifact.file}
+            title={artifact.title}
+            onLoad={() => setFrameLoaded(true)}
+          />
+          {!frameLoaded ? (
+            <div className="frame-loading" role="status" aria-live="polite">
+              <span className="spinner" aria-hidden="true" />
+              <span className="content-loading-text">{t.loading}</span>
+            </div>
+          ) : null}
+        </div>
       ) : null}
 
       {immersive ? (

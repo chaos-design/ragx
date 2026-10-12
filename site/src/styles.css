@@ -81,6 +81,10 @@ a:hover {
   flex-direction: column;
   border-right: 1px solid var(--line);
   background: var(--surface);
+  /* Pin the column to the top of its grid track and never let it stretch to (or
+     collapse with) the content-driven row height: the visible menu region stays
+     a fixed 100vh regardless of how much content changes. */
+  align-self: start;
 }
 .sidebar-scroll {
   flex: 1 1 auto;
@@ -621,6 +625,90 @@ a:hover {
 .artifact-bar .open-link {
   margin-left: auto;
   font-size: 13px;
+}
+
+/* ===== Content loading: doc markdown render + artifact iframe ===== */
+.content-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 240px;
+  padding: 20px 0;
+}
+.content-loading-text {
+  color: var(--faint);
+  font-size: 13px;
+}
+.spinner {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--line);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.skeleton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.skeleton span {
+  display: block;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--surface-3) 50%,
+    var(--surface-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+/* Spinner overlay shown above the artifact iframe while it is still loading. */
+.artifact-frame-wrap {
+  position: relative;
+}
+.frame-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.frame-loading .spinner {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .skeleton span {
+    animation: none;
+  }
 }
 
 /* ===== Immersive (fullscreen) artifact mode ===== */
