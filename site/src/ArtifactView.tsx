@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { artifactPages, getArtifact } from "./artifacts";
+import { useLang } from "./i18n";
 import { ROUTES } from "./routes";
 
 export function ArtifactView({ slug }: { slug: string }) {
+  const { t } = useLang();
   const artifact = getArtifact(slug);
   const [immersive, setImmersive] = useState(false);
 
@@ -19,10 +21,10 @@ export function ArtifactView({ slug }: { slug: string }) {
   if (!artifact) {
     return (
       <div className="content-inner">
-        <div className="crumb">产物</div>
-        <h1 className="page-title">未找到产物</h1>
+        <div className="crumb">{t.artifactCrumb}</div>
+        <h1 className="page-title">{t.artifactNotFound}</h1>
         <p className="page-desc">
-          没有 slug 为 <code>{slug}</code> 的产物。 <a href={ROUTES.gallery}>浏览全部产物</a>。
+          {t.artifactNotFoundBody(slug)} <a href={ROUTES.gallery}>{t.browseAll}</a>。
         </p>
       </div>
     );
@@ -35,7 +37,7 @@ export function ArtifactView({ slug }: { slug: string }) {
   return (
     <div className="content-inner">
       <div className="crumb">
-        <a href={ROUTES.home}>RAGX</a> / 产物 / {artifact.title}
+        <a href={ROUTES.home}>RAGX</a> / {t.artifactCrumb} / {artifact.title}
       </div>
 
       <h1 className="page-title">{artifact.title}</h1>
@@ -45,10 +47,10 @@ export function ArtifactView({ slug }: { slug: string }) {
         <span className="pill">{artifact.tags.join(" · ")}</span>
         <span className="pill">{artifact.file}</span>
         <a className="open-link" href={artifact.file} target="_blank" rel="noreferrer">
-          新窗口打开 ↗
+          {t.openNewWindow}
         </a>
         <button className="btn primary" type="button" onClick={() => setImmersive(true)}>
-          全屏沉浸 ⛶
+          {t.fullscreen}
         </button>
       </div>
 
@@ -65,15 +67,15 @@ export function ArtifactView({ slug }: { slug: string }) {
         <div className="immersive">
           <div className="immersive-top">
             <span className="immersive-title">{artifact.title}</span>
-            <span className="pill">Esc 退出</span>
+            <span className="pill">{t.escExit}</span>
             <button className="btn" type="button" onClick={() => setImmersive(false)}>
-              退出 ⤢
+              {t.exitImmersive}
             </button>
           </div>
           <iframe
             className="immersive-frame"
             src={artifact.file}
-            title={`${artifact.title}（沉浸模式）`}
+            title={`${artifact.title}${t.immersiveSuffix}`}
           />
         </div>
       ) : null}
@@ -82,24 +84,24 @@ export function ArtifactView({ slug }: { slug: string }) {
         <div className="pager">
           {prev ? (
             <a href={ROUTES.artifact(prev.slug)}>
-              <span className="pager-kicker">← 上一个产物</span>
+              <span className="pager-kicker">{t.pagerPrevArtifact}</span>
               <span className="pager-title">{prev.title}</span>
             </a>
           ) : (
             <a className="empty" href={ROUTES.gallery}>
-              <span className="pager-kicker">← 返回</span>
-              <span className="pager-title">产物画廊</span>
+              <span className="pager-kicker">{t.pagerBack}</span>
+              <span className="pager-title">{t.pagerGallery}</span>
             </a>
           )}
           {next ? (
             <a href={ROUTES.artifact(next.slug)}>
-              <span className="pager-kicker">下一个产物 →</span>
+              <span className="pager-kicker">{t.pagerNextArtifact}</span>
               <span className="pager-title">{next.title}</span>
             </a>
           ) : (
             <a className="empty" href={ROUTES.home}>
-              <span className="pager-kicker">文档中心 →</span>
-              <span className="pager-title">RAGX 文档</span>
+              <span className="pager-kicker">{t.pagerDocs}</span>
+              <span className="pager-title">{t.pagerDocsTitle}</span>
             </a>
           )}
         </div>

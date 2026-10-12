@@ -1,5 +1,6 @@
 import { artifactPages } from "./artifacts";
-import { docCatalog } from "./docs";
+import { catalogFor } from "./docs";
+import { nextLang, useLang } from "./i18n";
 import { GITHUB_REPO, ROUTES, type Route } from "./routes";
 
 const githubIcon = (
@@ -9,6 +10,8 @@ const githubIcon = (
 );
 
 export function Sidebar({ route }: { route: Route }) {
+  const { lang, setLang, t } = useLang();
+  const catalog = catalogFor(lang);
   const activeKind = route.kind;
   const activeSlug =
     activeKind === "doc" ? route.slug : activeKind === "artifact" ? route.slug : null;
@@ -20,24 +23,30 @@ export function Sidebar({ route }: { route: Route }) {
           <div className="brand-mark">R</div>
           <div>
             <div className="brand-name">RAGX</div>
-            <div className="brand-sub">Docs &amp; Artifacts</div>
+            <div className="brand-sub">{t.brandSub}</div>
           </div>
+          <button
+            type="button"
+            className="lang-toggle"
+            onClick={() => setLang(nextLang(lang))}
+            title={t.langTitle}
+            aria-label={t.langTitle}
+          >
+            {t.langLabel}
+          </button>
         </div>
 
         <nav className="nav-group">
-          <div className="nav-label">Navigate</div>
+          <div className="nav-label">{t.navigate}</div>
           <a href={ROUTES.home} className={`nav-item ${activeKind === "home" ? "active" : ""}`}>
-            <span>首页 / 总览</span>
+            <span>{t.home}</span>
           </a>
-          <a
-            href={ROUTES.gallery}
-            className={`nav-item ${activeKind === "gallery" ? "active" : ""}`}
-          >
-            <span>产物画廊</span>
+          <a href={ROUTES.gallery} className={`nav-item ${activeKind === "gallery" ? "active" : ""}`}>
+            <span>{t.gallery}</span>
           </a>
         </nav>
 
-        {docCatalog.sections.map((section) => (
+        {catalog.sections.map((section) => (
           <div className="nav-group" key={section.id}>
             <div className="nav-label">{section.title}</div>
             {section.items.map((item) => (
@@ -56,7 +65,7 @@ export function Sidebar({ route }: { route: Route }) {
         ))}
 
         <div className="nav-group">
-          <div className="nav-label">产物 (Artifacts)</div>
+          <div className="nav-label">{t.artifacts}</div>
           {artifactPages.map((a) => (
             <a
               key={a.slug}
@@ -74,7 +83,7 @@ export function Sidebar({ route }: { route: Route }) {
       <div className="sidebar-github">
         <a href={GITHUB_REPO} target="_blank" rel="noreferrer">
           {githubIcon}
-          <span>GitHub 仓库</span>
+          <span>GitHub</span>
           <span className="ext-arrow">↗</span>
         </a>
       </div>

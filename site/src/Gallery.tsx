@@ -1,20 +1,19 @@
 import { artifactPages } from "./artifacts";
+import { useLang } from "./i18n";
 import { ROUTES } from "./routes";
 
 const accents = ["", "cyan", "green", "purple", "yellow", ""] as const;
 
 export function Gallery() {
+  const { t } = useLang();
   return (
     <div className="content-inner">
       <div className="crumb">
-        <a href={ROUTES.home}>RAGX</a> / 产物画廊
+        <a href={ROUTES.home}>RAGX</a> / {t.galleryCrumb}
       </div>
 
-      <h1 className="page-title">产物画廊</h1>
-      <p className="page-desc">
-        仓库 <code>docs/</code> 下的可视化产物。每个产物在独立的全屏 内嵌视图中展示（同来源
-        iframe，相对路径加载），可在此直接切换。
-      </p>
+      <h1 className="page-title">{t.galleryTitle}</h1>
+      <p className="page-desc">{t.galleryDesc("docs/")}</p>
 
       <div className="grid">
         {artifactPages.map((a, i) => (

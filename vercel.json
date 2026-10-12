@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm install --no-audit --no-fund && npm run build",
+  "framework": null,
+  "installCommand": "cd site && npm install --no-audit --no-fund",
+  "buildCommand": "cd site && npm run build",
   "outputDirectory": "site/dist",
-  "framework": "vite",
   "headers": [
     {
       "source": "/assets/(.*)",

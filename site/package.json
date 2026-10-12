@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "description": "RAGX documentation static site (Vite + React, Vercel + GitHub Actions).",
   "scripts": {
-    "dev": "vite -c site/vite.config.ts",
-    "build": "tsc -b site && vite build -c site/vite.config.ts",
-    "preview": "vite preview -c site/vite.config.ts",
-    "typecheck": "tsc -b site"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "highlight.js": "^11.11.1",

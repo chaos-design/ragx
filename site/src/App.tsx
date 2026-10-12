@@ -4,10 +4,11 @@ import { ArtifactView } from "./ArtifactView";
 import { DocView } from "./DocView";
 import { Gallery } from "./Gallery";
 import { Home } from "./Home";
+import { LangProvider } from "./i18n";
 import { useHashRoute } from "./routes";
 import { Sidebar } from "./Sidebar";
 
-export function App() {
+function Shell() {
   const route = useHashRoute();
 
   let view: ReactNode;
@@ -16,7 +17,7 @@ export function App() {
       view = <Home />;
       break;
     case "doc":
-      view = <DocView slug={route.slug} />;
+      view = <DocView key={route.slug} slug={route.slug} />;
       break;
     case "artifact":
       view = <ArtifactView key={route.slug} slug={route.slug} />;
@@ -34,5 +35,13 @@ export function App() {
       <main className="content">{view}</main>
       <BottomBar />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <LangProvider>
+      <Shell />
+    </LangProvider>
   );
 }
