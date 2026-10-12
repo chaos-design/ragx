@@ -15,6 +15,7 @@
   --purple: #b893ff;
   --radius: 8px;
   --sidebar-w: 300px;
+  --bottombar-h: 52px;
   --display: "Avenir Next Condensed", "DIN Condensed", "Avenir Next", sans-serif;
   --body: "Avenir Next", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --mono: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
@@ -528,21 +529,29 @@ a:hover {
   color: var(--ink);
 }
 
-/* Doc prev / next */
+/* Doc / artifact prev-next — pinned to the bottom of the viewport (吸底);
+   it does not move with the page scroll. */
 .pager {
+  position: fixed;
+  left: var(--sidebar-w);
+  right: 0;
+  bottom: 0;
+  z-index: 40;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  margin-top: 44px;
+  margin: 0;
+  padding: 12px 24px calc(12px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  padding-top: 20px;
+  background: var(--surface);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
 }
 .pager a {
   display: block;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 12px 14px;
-  background: var(--surface);
+  background: var(--surface-2);
   text-decoration: none;
 }
 .pager a:hover {
@@ -567,6 +576,10 @@ a:hover {
 .pager a.empty {
   border: 1px dashed var(--line);
   background: transparent;
+}
+/* Keep the last content line clear of the pinned pager bar (pager pages only). */
+.content-inner:has(.pager) {
+  padding-bottom: 48px;
 }
 
 /* ===== Artifact (iframe) ===== */
@@ -892,8 +905,18 @@ a:hover {
   .bottombar {
     display: flex;
     left: 0;
+    min-height: var(--bottombar-h);
   }
+  /* Pager stacks just above the GitHub bar on mobile (吸底, scroll-independent). */
+  .pager {
+    left: 0;
+    bottom: calc(var(--bottombar-h) + env(safe-area-inset-bottom));
+  }
+  /* Clear the GitHub bar on every mobile page; add the pager's height on pager pages. */
   .content-inner {
-    padding: 24px 20px 0;
+    padding: 24px 20px calc(var(--bottombar-h) + env(safe-area-inset-bottom));
+  }
+  .content-inner:has(.pager) {
+    padding-bottom: calc(var(--bottombar-h) + 84px + env(safe-area-inset-bottom));
   }
 }
