@@ -93,7 +93,7 @@ a:hover {
   padding: 14px 16px 16px;
 }
 /* Pinned at the bottom of the sidebar; does not scroll with the menu.
-   A flex row: the GitHub link stretches, the language toggle sits beside it. */
+   A flex row: the GitHub link and the language toggle each take half. */
 .sidebar-github {
   flex: 0 0 auto;
   display: flex;
@@ -107,7 +107,8 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  min-width: 0;
   padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -171,16 +172,17 @@ a:hover {
   color: var(--ink);
   border-color: var(--blue);
 }
-/* Language toggle placed in the pinned footer next to GitHub: match its height
-   and pop on the footer background instead of the header. */
+/* Language toggle placed in the pinned footer next to GitHub: match its height,
+   share the row 50/50 with the GitHub link, and pop on the footer background.
+   Keep the chip radius (8px) instead of the pill from the base .lang-toggle. */
 .sidebar-github .lang-toggle {
-  flex: 0 0 auto;
+  flex: 1 1 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 46px;
   margin-left: 0;
   background: var(--surface-3);
+  border-radius: 8px;
 }
 .brand-name {
   font-family: var(--display);
