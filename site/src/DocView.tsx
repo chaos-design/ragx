@@ -111,9 +111,16 @@ export function DocView({ slug }: { slug: string }) {
             dangerouslySetInnerHTML={doc ? { __html: doc.html } : undefined}
           />
           {!doc ? (
-            <p className="doc-loading" style={{ color: "var(--faint)" }}>
-              {t.rendering}
-            </p>
+            <div className="content-loading">
+              <div className="skeleton" aria-hidden="true">
+                <span style={{ width: "35%" }} />
+                <span />
+                <span style={{ width: "96%" }} />
+                <span style={{ width: "88%" }} />
+                <span style={{ width: "92%" }} />
+                <span style={{ width: "70%" }} />
+              </div>
+            </div>
           ) : null}
 
           <div className="pager">

@@ -1,4 +1,5 @@
 import { GITHUB_REPO } from "./routes";
+import { nextLang, useLang } from "./i18n";
 
 const githubIcon = (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -6,15 +7,24 @@ const githubIcon = (
   </svg>
 );
 
-// Persistent GitHub entry. Shown as a full-width 吸底 bar on mobile; on desktop
-// the same entry lives in the pinned sidebar footer, so this is hidden there.
+// Persistent 吸底 bar on mobile (hidden on desktop, where the same entries live
+// in the pinned sidebar footer): GitHub link + language switcher, grouped.
 export function BottomBar() {
+  const { lang, setLang, t } = useLang();
   return (
-    <nav className="bottombar" aria-label="GitHub">
+    <nav className="bottombar" aria-label="GitHub 与语言">
       <a href={GITHUB_REPO} target="_blank" rel="noreferrer" className="bottombar-item external">
         {githubIcon}
         <span>GitHub</span>
       </a>
+      <button
+        type="button"
+        className="bottombar-item lang"
+        onClick={() => setLang(nextLang(lang))}
+        aria-label={t.langTitle}
+      >
+        <span>{t.langLabel}</span>
+      </button>
     </nav>
   );
 }
