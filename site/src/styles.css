@@ -173,7 +173,8 @@ a:hover {
   border-color: var(--blue);
 }
 /* Language toggle placed in the pinned footer next to GitHub: match its height,
-   share the row 50/50 with the GitHub link, and pop on the footer background. */
+   share the row 50/50 with the GitHub link, and pop on the footer background.
+   Keep the chip radius (8px) instead of the pill from the base .lang-toggle. */
 .sidebar-github .lang-toggle {
   flex: 1 1 0;
   display: inline-flex;
@@ -181,6 +182,7 @@ a:hover {
   justify-content: center;
   margin-left: 0;
   background: var(--surface-3);
+  border-radius: 8px;
 }
 .brand-name {
   font-family: var(--display);
