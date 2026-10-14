@@ -93,11 +93,12 @@ a:hover {
   padding: 14px 16px 16px;
 }
 /* Pinned at the bottom of the sidebar; does not scroll with the menu.
-   A flex row: the GitHub link stretches, the language toggle sits beside it. */
+   A 1fr / 1fr grid: the GitHub link and the language toggle each take half
+   of the row (equal split). */
 .sidebar-github {
   flex: 0 0 auto;
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   padding: 12px 16px;
   border-top: 1px solid var(--line);
@@ -107,7 +108,7 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1 1 auto;
+  min-width: 0;
   padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -171,15 +172,16 @@ a:hover {
   color: var(--ink);
   border-color: var(--blue);
 }
-/* Language toggle placed in the pinned footer next to GitHub: match its height
-   and pop on the footer background instead of the header. */
+/* Language toggle placed in the pinned footer next to GitHub: the footer is a
+   1fr / 1fr grid, so both cells split the row evenly; this pops the toggle on
+   the footer background instead of the header. */
 .sidebar-github .lang-toggle {
-  flex: 0 0 auto;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 46px;
   margin-left: 0;
+  border-radius: 8px;
   background: var(--surface-3);
 }
 .brand-name {
