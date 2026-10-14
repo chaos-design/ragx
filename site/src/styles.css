@@ -988,6 +988,24 @@ a:hover {
     overflow: visible;
     padding: 20px 16px 12px;
   }
+  /* Pinned top header: fixed to the top of the viewport, so it is never moved
+     by page scroll. The in-flow ::before spacer (same height) keeps the menu
+     from starting under the fixed bar. */
+  .brand {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .sidebar::before {
+    content: "";
+    display: block;
+    height: 65px;
+  }
   /* GitHub is reachable from the mobile 吸底 bar instead, so drop the footer. */
   .sidebar-github {
     display: none;
