@@ -1042,6 +1042,8 @@ a:hover {
     height: 100vh;
     height: 100dvh;
     min-height: 0;
+    /* Only .content scrolls (below); no page-level scroll to leak under bars. */
+    overflow: hidden;
   }
   /* Header row pinned as the first flex child; the dropdown is positioned off
      its bottom edge, docked directly under it. Sits above the pinned pager
@@ -1057,11 +1059,24 @@ a:hover {
     border-bottom: 1px solid var(--line);
   }
   /* Only this pane scrolls: it fills the space between the pinned header and
-     the pinned bottom bars, and carries its own overflow. */
+     the pinned bottom bars, and carries its own overflow. The bottom padding
+     reserves exactly the height of the fixed bars so the last line of content
+     is never hidden behind them; the :has() rule adds the pager's height on
+     pages that have one. */
   .content {
     flex: 1 1 auto;
+    /* Override the base min-height:100vh so the pane is exactly the flex row. */
     min-height: 0;
     overflow-y: auto;
+    /* Reserve exactly the fixed bottom bar(s) so the last line of content
+       always scrolls above them and is never occluded. */
+    padding-bottom: calc(var(--bottombar-h) + env(safe-area-inset-bottom));
+  }
+  /* Pager pages reserve more: the pager sits above the bottom bar, and both
+     bars carry their own safe-area padding, so the inset is counted twice to
+     guarantee the last line of content clears the pager on notched phones. */
+  .content:has(.pager) {
+    padding-bottom: calc(var(--bottombar-h) + 84px + 2 * env(safe-area-inset-bottom));
   }
   .nav-toggle {
     display: inline-flex;
@@ -1103,12 +1118,11 @@ a:hover {
     left: 0;
     bottom: calc(var(--bottombar-h) + env(safe-area-inset-bottom));
   }
-  /* Clear the GitHub bar on every mobile page; add the pager's height on pager pages. */
+  /* Top/side gutters only. The clearance for the fixed bottom bars lives on
+     the scroll pane (.content) so the last line can always reach above them;
+     reserving it here too would double the space. */
   .content-inner {
-    padding: 24px 20px calc(var(--bottombar-h) + env(safe-area-inset-bottom));
-  }
-  .content-inner:has(.pager) {
-    padding-bottom: calc(var(--bottombar-h) + 84px + env(safe-area-inset-bottom));
+    padding: 24px 20px 0;
   }
 
   /* Fluid / responsive content width: pages follow the viewport, no
