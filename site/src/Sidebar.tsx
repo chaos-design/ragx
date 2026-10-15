@@ -104,13 +104,17 @@ export function Sidebar({ route }: { route: Route }) {
 
   return (
     <aside className="sidebar" ref={sidebarRef}>
-      {/* 顶部固定 header：不随菜单滚动 */}
-      <div className="brand">
-        <div className="brand-mark">R</div>
-        <div>
-          <div className="brand-name">RAGX</div>
-          <div className="brand-sub">{t.brandSub}</div>
-        </div>
+      {/* 顶部固定 header：不随菜单滚动。Slogan（logo + 名称）是可点击链接，
+          点击回到首页 /——移动端从任意文档页点它即可返回总览。
+          The toggle is a sibling of the brand link, never nested inside it. */}
+      <div className="brand-row">
+        <a href={ROUTES.home} className="brand" onClick={() => setMenuOpen(false)}>
+          <div className="brand-mark">R</div>
+          <div>
+            <div className="brand-name">RAGX</div>
+            <div className="brand-sub">{t.brandSub}</div>
+          </div>
+        </a>
         {/* Mobile only (see the max-width:860px block in styles.css): collapses
             the menu below. Hidden on desktop, where the menu is always shown. */}
         <button

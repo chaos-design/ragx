@@ -131,8 +131,9 @@ a:hover {
   color: var(--faint);
 }
 
-/* Pinned sidebar header: sits above the scrollable menu, does not scroll. */
-.brand {
+/* Pinned sidebar header row: sits above the scrollable menu, does not scroll.
+   Hosts the clickable slogan (link → home) and, on mobile, the nav toggle. */
+.brand-row {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -140,6 +141,28 @@ a:hover {
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
+}
+/* Slogan is a link to the home route: clicking it returns to "/" from any
+   page. Reset the global `a` blue/underline so it looks like the logo row. */
+.brand {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.brand:hover {
+  text-decoration: none;
+}
+.brand:hover .brand-mark {
+  filter: brightness(1.08);
+}
+.brand:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 .brand-mark {
   width: 30px;
@@ -153,6 +176,7 @@ a:hover {
   color: #0c0d0e;
   font-size: 16px;
   flex: 0 0 auto;
+  transition: filter 0.15s ease;
 }
 .lang-toggle {
   margin-left: auto;
@@ -1008,25 +1032,36 @@ a:hover {
   }
 }
 @media (max-width: 860px) {
-  /* Block flow (not the 2-row grid): the sidebar's grid row would end after
-     the header, clipping any sticky travel. In block flow the sticky header
-     travels with the full page scroll instead. */
+  /* App-style layout: the viewport is a fixed-height column. The header row
+     stays put at the top; only the content pane scrolls inside it. (A sticky
+     header over a whole-page scroll would still let the page body move; the
+     requirement is that the header never scrolls away.) */
   .shell {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
   }
-  /* Header as a sticky mobile top bar: pinned to the viewport top so it (and
-     the hamburger) stay visible while reading long doc pages. The dropdown
-     is positioned off the sidebar's bottom edge, so it stays docked under
-     the header. Sits above the pinned pager (z-index 40), below bottombar (50). */
+  /* Header row pinned as the first flex child; the dropdown is positioned off
+     its bottom edge, docked directly under it. Sits above the pinned pager
+     (z-index 40), below the bottombar (50). */
   .sidebar {
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 45;
+    flex: 0 0 auto;
     height: auto;
     overflow: visible;
     display: block;
     border-right: none;
     border-bottom: 1px solid var(--line);
+  }
+  /* Only this pane scrolls: it fills the space between the pinned header and
+     the pinned bottom bars, and carries its own overflow. */
+  .content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
   .nav-toggle {
     display: inline-flex;
