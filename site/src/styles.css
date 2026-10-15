@@ -1008,13 +1008,19 @@ a:hover {
   }
 }
 @media (max-width: 860px) {
+  /* Block flow (not the 2-row grid): the sidebar's grid row would end after
+     the header, clipping any sticky travel. In block flow the sticky header
+     travels with the full page scroll instead. */
   .shell {
-    grid-template-columns: 1fr;
+    display: block;
   }
-  /* Header as mobile top bar: static-flow container that anchors the dropdown
-     and lifts it above the pinned pager (z-index 40). */
+  /* Header as a sticky mobile top bar: pinned to the viewport top so it (and
+     the hamburger) stay visible while reading long doc pages. The dropdown
+     is positioned off the sidebar's bottom edge, so it stays docked under
+     the header. Sits above the pinned pager (z-index 40), below bottombar (50). */
   .sidebar {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 45;
     height: auto;
     overflow: visible;
