@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { artifactPages } from "./artifacts";
 import { catalogFor } from "./docs";
 import { nextLang, useLang } from "./i18n";
@@ -9,6 +10,43 @@ const githubIcon = (
   </svg>
 );
 
+// Glyphs for the mobile nav toggle: hamburger when collapsed, × when expanded.
+const menuIcon = (
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);
+
+const closeIcon = (
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+);
+
+/** Shared by the toggle's aria-controls and the collapsible menu container. */
+const NAV_MENU_ID = "sidebar-nav-menu";
+/** Must stay in sync with the mobile breakpoint used in styles.css. */
+const MOBILE_MEDIA_QUERY = "(max-width: 860px)";
+
+/** Stable key for the active route — used to collapse the menu after navigation. */
+function routeKey(route: Route): string {
+  return route.kind === "doc" || route.kind === "artifact" ? `${route.kind}:${route.slug}` : route.kind;
+}
+
 export function Sidebar({ route }: { route: Route }) {
   const { lang, setLang, t } = useLang();
   const catalog = catalogFor(lang);
@@ -16,8 +54,56 @@ export function Sidebar({ route }: { route: Route }) {
   const activeSlug =
     activeKind === "doc" ? route.slug : activeKind === "artifact" ? route.slug : null;
 
+  // Mobile-only: the menu collapses behind the header toggle. On desktop the
+  // menu is always visible, so this state is inert there.
+  const [menuOpen, setMenuOpen] = useState(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const key = routeKey(route);
+
+  // Collapse after navigating (tapping a menu item should reveal the page).
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [key]);
+
+  // Esc to close, click-outside to close, and drop stale state when the
+  // viewport leaves the mobile breakpoint. Only bound while open.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      // Send focus back to the trigger so keyboard users keep their place.
+      toggleRef.current?.focus();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (target && sidebarRef.current && !sidebarRef.current.contains(target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    // Crossing back to desktop un-hides the menu via CSS; clear the flag so
+    // aria-expanded never reports an expanded menu that is not collapsible.
+    const media = window.matchMedia(MOBILE_MEDIA_QUERY);
+    const onBreakpointChange = () => {
+      if (!media.matches) setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    media.addEventListener("change", onBreakpointChange);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+      media.removeEventListener("change", onBreakpointChange);
+    };
+  }, [menuOpen]);
+
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" ref={sidebarRef}>
       {/* 顶部固定 header：不随菜单滚动 */}
       <div className="brand">
         <div className="brand-mark">R</div>
@@ -25,9 +111,30 @@ export function Sidebar({ route }: { route: Route }) {
           <div className="brand-name">RAGX</div>
           <div className="brand-sub">{t.brandSub}</div>
         </div>
+        {/* Mobile only (see the max-width:860px block in styles.css): collapses
+            the menu below. Hidden on desktop, where the menu is always shown. */}
+        <button
+          type="button"
+          className="nav-toggle"
+          ref={toggleRef}
+          aria-expanded={menuOpen}
+          aria-controls={NAV_MENU_ID}
+          aria-label={menuOpen ? t.navMenuClose : t.navMenuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? closeIcon : menuIcon}
+        </button>
       </div>
 
-      <div className="sidebar-scroll">
+      <div
+        id={NAV_MENU_ID}
+        className={`sidebar-scroll ${menuOpen ? "is-open" : ""}`}
+        // Re-tapping the already-active entry fires no hashchange, so close here
+        // as well; focus is left alone to keep the default link behaviour.
+        onClick={(event) => {
+          if ((event.target as HTMLElement | null)?.closest?.("a")) setMenuOpen(false);
+        }}
+      >
         <nav className="nav-group">
           <div className="nav-label">{t.navigate}</div>
           <a href={ROUTES.home} className={`nav-item ${activeKind === "home" ? "active" : ""}`}>

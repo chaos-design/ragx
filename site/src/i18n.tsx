@@ -9,6 +9,10 @@ const STRINGS = {
   zh: {
     brandSub: "文档与产物",
     navigate: "导航",
+    // Mobile nav toggle (hamburger) — label reflects the action, while
+    // aria-expanded carries the current state.
+    navMenuOpen: "展开导航菜单",
+    navMenuClose: "收起导航菜单",
     home: "首页 / 总览",
     gallery: "产物画廊",
     artifacts: "产物 (Artifacts)",
@@ -84,6 +88,8 @@ const STRINGS = {
   en: {
     brandSub: "Docs & Artifacts",
     navigate: "Navigate",
+    navMenuOpen: "Open navigation menu",
+    navMenuClose: "Close navigation menu",
     home: "Home",
     gallery: "Artifact Gallery",
     artifacts: "Artifacts",
