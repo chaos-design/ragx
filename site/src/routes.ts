@@ -47,7 +47,12 @@ export function useHashRoute(): Route {
   useEffect(() => {
     const onHash = () => {
       setRoute(parseHash(window.location.hash));
+      // Desktop: the document scrolls. Mobile (app-style layout): only the
+      // .content pane scrolls, so reset it too.
       window.scrollTo(0, 0);
+      document.querySelectorAll<HTMLElement>(".content").forEach((el) => {
+        el.scrollTop = 0;
+      });
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
