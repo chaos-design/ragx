@@ -19,6 +19,8 @@ const STRINGS = {
     sidebarFoot: "文档与产物在构建时内联打包；GitHub Actions 构建后经 Vercel 部署",
     langLabel: "English",
     langTitle: "切换到 English",
+    // Compact label for the square language button in the mobile header.
+    langShort: "EN",
     // Home
     homeCrumb: "RAGX · 在线文档中心",
     heroKicker: "Retrieval-Augmented Generation · 工程实践",
@@ -96,6 +98,8 @@ const STRINGS = {
     sidebarFoot: "Docs and artifacts are inlined at build time; GitHub Actions builds and Vercel deploys",
     langLabel: "中文",
     langTitle: "Switch to 中文",
+    // Compact label for the square language button in the mobile header.
+    langShort: "中",
     homeCrumb: "RAGX · Online Docs",
     heroKicker: "Retrieval-Augmented Generation · Engineering Practice",
     heroTitle: "RAGX Documentation & Artifact Gallery",

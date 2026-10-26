@@ -15,7 +15,7 @@
   --purple: #b893ff;
   --radius: 8px;
   --sidebar-w: 300px;
-  --bottombar-h: 52px;
+  --header-h: 56px;
   --display: "Avenir Next Condensed", "DIN Condensed", "Avenir Next", sans-serif;
   --body: "Avenir Next", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --mono: "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
@@ -220,39 +220,61 @@ a:hover {
   margin-top: 1px;
 }
 
-/* Mobile nav toggle (hamburger). Desktop hides it — the menu is always visible
-   there — so this cannot shift the desktop header layout. Revealed inside the
-   max-width:860px block at the bottom of the file. */
+/* Mobile-only top bar + nav toggle + tap-to-close backdrop. Desktop keeps the
+   pinned sidebar (which carries the same brand, GitHub and language entries),
+   so all three are hidden here and revealed inside the max-width:860px block at
+   the bottom of this file. */
+.site-header {
+  display: none;
+}
+.nav-backdrop {
+  display: none;
+}
 .nav-toggle {
   display: none;
-  margin-left: auto;
+  place-items: center;
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
-  align-items: center;
-  justify-content: center;
+  width: 36px;
+  height: 36px;
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--surface-2);
-  color: var(--muted);
-  cursor: pointer;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease;
-}
-.nav-toggle:hover {
+  background: var(--surface-3);
   color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.nav-toggle:hover,
+.nav-toggle.open {
   border-color: var(--blue);
 }
 .nav-toggle:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
-.nav-toggle svg {
-  width: 18px;
-  height: 18px;
+.nav-toggle-bars {
+  display: grid;
+  gap: 4px;
+  width: 16px;
+}
+.nav-toggle-bars i {
   display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+/* Open state morphs the three bars into a close cross. */
+.nav-toggle.open .nav-toggle-bars i:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle.open .nav-toggle-bars i:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.open .nav-toggle-bars i:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 .nav-group {
@@ -303,10 +325,14 @@ a:hover {
   min-height: 100vh;
   padding: 0 0 80px;
 }
+/* Content area spans the full width of the available content column — no
+   centering cap — so it tracks the viewport. The gutter scales with the
+   viewport (3vw, clamped 20–56px). Wide content (tables, code blocks, diagrams)
+   keeps its own `overflow-x: auto` so it scrolls within itself instead of
+   forcing the whole column to scroll or squish. */
 .content-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px 40px 0;
+  padding-inline: clamp(20px, 3vw, 56px);
+  padding-block: 32px 0;
 }
 
 .crumb {
@@ -428,6 +454,10 @@ a:hover {
   font-size: 15px;
   line-height: 1.75;
   color: var(--ink);
+  /* Grid item default min-width:auto lets a wide table push the whole track (and
+     the content area) wider. min-width:0 keeps the body at the track width so
+     wide children scroll inside themselves instead. */
+  min-width: 0;
   /* Safety net for long unbreakable tokens (URLs, identifiers) in prose: without
      this a single long word inflates the column past the viewport on narrow
      screens. `break-word` only kicks in when the word cannot fit a line. */
@@ -967,72 +997,6 @@ a:hover {
   display: block;
 }
 
-/* ===== Bottom nav bar (吸底内容切换菜单) =====
-   Shown on mobile only (see the max-width:860px block); on desktop the
-   GitHub entry lives in the pinned sidebar footer instead. */
-.bottombar {
-  position: fixed;
-  left: var(--sidebar-w);
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-  display: none;
-  align-items: stretch;
-  gap: 4px;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-  background: var(--surface);
-  border-top: 1px solid var(--line);
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
-}
-.bottombar-item {
-  flex: 1 1 0;
-  min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 8px 10px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  font-size: 13px;
-  color: var(--muted);
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    border-color 0.15s;
-}
-.bottombar-item svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-}
-.bottombar-item:hover {
-  background: var(--surface-2);
-  color: var(--ink);
-  text-decoration: none;
-}
-.bottombar-item.active {
-  background: var(--surface-3);
-  color: var(--ink);
-  border-color: var(--line);
-}
-.bottombar-item.external {
-  color: var(--cyan);
-}
-.bottombar-item.external:hover {
-  color: var(--cyan);
-}
-/* Language switcher shown only in the mobile 吸底 bar (desktop uses the sidebar
-   footer toggle). A <button>, so reset its native box to match the chip. */
-.bottombar-item.lang {
-  font-family: var(--body);
-  cursor: pointer;
-  background: var(--surface-2);
-  border-color: var(--line);
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 1080px) {
   /* minmax(0, 1fr), NOT bare 1fr: a bare 1fr track has an `auto` minimum
@@ -1048,10 +1012,10 @@ a:hover {
   }
 }
 @media (max-width: 860px) {
-  /* App-style layout: the viewport is a fixed-height column. The header row
-     stays put at the top; only the content pane scrolls inside it. (A sticky
-     header over a whole-page scroll would still let the page body move; the
-     requirement is that the header never scrolls away.) */
+  /* App-style layout: the viewport is a fixed-height column. The mobile header
+     is the first flex child, so it never scrolls; only the content pane scrolls
+     inside it. (A sticky header over a whole-page scroll would still let the
+     page body move; the requirement is that the header never scrolls away.) */
   .shell {
     display: flex;
     flex-direction: column;
@@ -1061,31 +1025,180 @@ a:hover {
     /* Only .content scrolls (below); no page-level scroll to leak under bars. */
     overflow: hidden;
   }
-  /* Header row pinned as the first flex child; the dropdown is positioned off
-     its bottom edge, docked directly under it. Sits above the pinned pager
-     (z-index 40), below the bottombar (50). */
-  .sidebar {
-    position: relative;
-    z-index: 45;
-    flex: 0 0 auto;
-    /* Base .sidebar carries align-self:start (the desktop grid's "pin the
-       column, never stretch" rule). In the mobile flex column that stops the
-       header stretching across the cross (horizontal) axis, shrinking it to
-       content width. Override to stretch so the header spans the full
-       viewport width. */
-    align-self: stretch;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-    display: block;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
+  /* While the nav panel is open, freeze the content scroll so only the panel
+     (and its own scroll area) reacts behind the backdrop. */
+  .shell[data-nav-open="true"] .content {
+    overflow: hidden;
   }
-  /* Only this pane scrolls: it fills the space between the pinned header and
-     the pinned bottom bars, and carries its own overflow. Its bottom padding
-     reserves the band the fixed bottom bars (.bottombar, and .pager on
-     doc/artifact pages) occupy, so the last line of content is never hidden.
-     The reservation is measured at runtime (useBottomReserve sets
+
+  /* ===== Mobile header: brand + GitHub + language + nav toggle ===== */
+  .site-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    height: var(--header-h);
+    padding: 0 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    /* A flex item honours z-index even when static; keep the bar above the
+       panel (55) and its backdrop (54). */
+    z-index: 60;
+  }
+  /* Brand slogan is a link back to "/", so clicking it from any page returns to
+     the overview. Neutralise the global anchor colour/underline. */
+  .site-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .site-header-brand:hover {
+    text-decoration: none;
+  }
+  .site-header-brand:hover .brand-mark {
+    filter: brightness(1.08);
+  }
+  .site-header-brand:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .site-header-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .site-header-text .brand-name,
+  .site-header-text .brand-sub {
+    line-height: 1.2;
+  }
+  .site-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+  /* Square controls of equal size, so the actions row reads as one set. */
+  .site-header .lang-toggle,
+  .header-github,
+  .nav-toggle {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin-left: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-3);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .site-header .lang-toggle:hover,
+  .header-github:hover {
+    color: var(--ink);
+    border-color: var(--blue);
+    text-decoration: none;
+  }
+  .header-github {
+    color: var(--cyan);
+    cursor: pointer;
+  }
+  .header-github svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Tap-anywhere-to-close target: covers the page below the header, leaving the
+     header (and therefore the toggle) clickable. */
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    z-index: 54;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  /* Freeze the page behind the panel while it is open. */
+  body.nav-open {
+    overflow: hidden;
+  }
+
+  /* ===== Nav panel: full-width, from the header down to the viewport bottom,
+     with its own scroll area. Collapsed (display:none) until toggled, which
+     also keeps its links out of the tab order and the accessibility tree. ===== */
+  .sidebar {
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    /* Override the base column rules (100vh height, align-self:start) — the
+       insets above define the panel box. */
+    height: auto;
+    align-self: auto;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border-right: none;
+    background: var(--surface);
+  }
+  .shell[data-nav-open="true"] .sidebar {
+    display: flex;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+    animation: nav-slide 0.18s ease;
+  }
+  /* Suppress the browser's default focus outline on the panel itself; keyboard
+     focus gets a themed ring instead, so a mouse-opened panel doesn't flash a
+     jarring box. */
+  .sidebar:focus {
+    outline: none;
+  }
+  .sidebar:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+  }
+  @keyframes nav-slide {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .sidebar-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  }
+  .sidebar-scroll .nav-group:first-child {
+    margin-top: 0;
+  }
+  /* The brand row and the GitHub/language footer now live in the mobile header. */
+  .brand-row,
+  .sidebar-github {
+    display: none;
+  }
+
+  /* The pager is the only 吸底 element left; it sits directly above the safe
+     area. */
+  .pager {
+    left: 0;
+    bottom: env(safe-area-inset-bottom);
+  }
+  /* Only this pane scrolls: it fills the space between the header and the
+     bottom of the viewport and carries its own overflow. Its bottom padding
+     reserves the band the fixed pager occupies so the last line of content is
+     never hidden. The reservation is measured at runtime (useBottomReserve sets
      --bottom-reserve on <html>) because the pager's height changes with title
      wrap and language; the var() fallback covers the pre-JS first paint. */
   .content {
@@ -1093,57 +1206,9 @@ a:hover {
     /* Override the base min-height:100vh so the pane is exactly the flex row. */
     min-height: 0;
     overflow-y: auto;
-    padding-bottom: var(--bottom-reserve, calc(var(--bottombar-h) + env(safe-area-inset-bottom)));
+    padding-bottom: var(--bottom-reserve, calc(84px + env(safe-area-inset-bottom)));
   }
-  .nav-toggle {
-    display: inline-flex;
-  }
-  /* Collapsed until toggled. display:none also keeps the links out of the tab
-     order and the accessibility tree, matching aria-expanded="false". */
-  .sidebar-scroll {
-    display: none;
-    position: absolute;
-    top: calc(100% + 1px);
-    left: 0;
-    right: 0;
-    max-height: calc(100vh - var(--bottombar-h) - 80px - env(safe-area-inset-bottom));
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: 12px 16px 16px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
-  }
-  .sidebar-scroll.is-open {
-    display: block;
-  }
-  .sidebar-scroll .nav-group:first-child {
-    margin-top: 0;
-  }
-  /* NOTE: the header is a stretched in-flow flex child of the .shell column
-     (app-style layout, first rule in this block), so it already spans the full
-     viewport width and never scrolls. main's earlier pinned-header rules
-     (.brand{position:fixed} + .sidebar::before spacer) targeted the old flat
-     .brand-as-header DOM and would mis-pin only the slogan link while adding a
-     65px gap here — removed in favour of the app-style layout. */
-  /* GitHub is reachable from the mobile 吸底 bar instead, so drop the footer. */
-  .sidebar-github {
-    display: none;
-  }
-  /* Full-width 吸底 content-switching bar (图1). */
-  .bottombar {
-    display: flex;
-    left: 0;
-    min-height: var(--bottombar-h);
-  }
-  /* Pager stacks just above the GitHub bar on mobile (吸底, scroll-independent). */
-  .pager {
-    left: 0;
-    bottom: calc(var(--bottombar-h) + env(safe-area-inset-bottom));
-  }
-  /* Top/side gutters only. The clearance for the fixed bottom bars lives on
-     the scroll pane (.content) so the last line can always reach above them;
-     reserving it here too would double the space. */
+  /* Top/side gutters only — the pager clearance lives on .content. */
   .content-inner {
     padding: 24px 20px 0;
   }

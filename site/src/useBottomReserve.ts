@@ -5,16 +5,15 @@ const MOBILE_MEDIA_QUERY = "(max-width: 860px)";
 const ROOT = "--bottom-reserve";
 
 /**
- * On the mobile app-style layout only `.content` scrolls, while the bottom bars
- * (`.bottombar`, and `.pager` on doc/artifact pages) are `position: fixed`
- * overlays at the viewport bottom. To guarantee the last line of content is
- * never hidden behind them, we measure how high the topmost visible fixed bar
- * reaches and reserve that band on <html> as `--bottom-reserve`; `.content`
- * consumes it as its padding-bottom.
+ * On the mobile app-style layout only `.content` scrolls, while the pager
+ * (`.pager`, on doc/artifact pages) is a `position: fixed` overlay at the
+ * viewport bottom. To guarantee the last line of content is never hidden behind
+ * it, we measure how high its top edge reaches and reserve that band on <html>
+ * as `--bottom-reserve`; `.content` consumes it as its padding-bottom.
  *
  * Measuring (instead of hardcoding a bar height) keeps the reservation correct
  * whenever the pager title wraps to more lines or the language switches — both
- * change the bars' real height at runtime.
+ * change the bar's real height at runtime.
  */
 export function useBottomReserve(route: Route): void {
   useEffect(() => {
@@ -22,7 +21,7 @@ export function useBottomReserve(route: Route): void {
 
     const visibleFixedBars = (): Element[] => {
       const out: Element[] = [];
-      for (const sel of [".bottombar", ".pager"]) {
+      for (const sel of [".pager"]) {
         const el = document.querySelector(sel);
         if (!el) continue;
         const cs = window.getComputedStyle(el);

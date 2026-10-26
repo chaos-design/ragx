@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import type { RefObject } from "react";
 import { artifactPages } from "./artifacts";
 import { catalogFor } from "./docs";
 import { nextLang, useLang } from "./i18n";
@@ -10,135 +10,36 @@ const githubIcon = (
   </svg>
 );
 
-// Glyphs for the mobile nav toggle: hamburger when collapsed, × when expanded.
-const menuIcon = (
-  <svg
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-  >
-    <path d="M4 7h16M4 12h16M4 17h16" />
-  </svg>
-);
-
-const closeIcon = (
-  <svg
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-  >
-    <path d="M6 6l12 12M18 6L6 18" />
-  </svg>
-);
-
-/** Shared by the toggle's aria-controls and the collapsible menu container. */
-const NAV_MENU_ID = "sidebar-nav-menu";
-/** Must stay in sync with the mobile breakpoint used in styles.css. */
-const MOBILE_MEDIA_QUERY = "(max-width: 860px)";
-
-/** Stable key for the active route — used to collapse the menu after navigation. */
-function routeKey(route: Route): string {
-  return route.kind === "doc" || route.kind === "artifact" ? `${route.kind}:${route.slug}` : route.kind;
-}
-
-export function Sidebar({ route }: { route: Route }) {
+/**
+ * Desktop navigation column. On mobile the same element doubles as the panel the
+ * header toggle expands (hence `id="site-nav"` + `aria-controls` on the toggle,
+ * and `tabIndex={-1}` so the panel itself can receive programmatic focus when
+ * it opens). Its brand row and footer live in the mobile header there, so both
+ * are hidden inside the mobile breakpoint.
+ */
+export function Sidebar({ ref, route }: { ref?: RefObject<HTMLElement | null>; route: Route }) {
   const { lang, setLang, t } = useLang();
   const catalog = catalogFor(lang);
   const activeKind = route.kind;
   const activeSlug =
     activeKind === "doc" ? route.slug : activeKind === "artifact" ? route.slug : null;
 
-  // Mobile-only: the menu collapses behind the header toggle. On desktop the
-  // menu is always visible, so this state is inert there.
-  const [menuOpen, setMenuOpen] = useState(false);
-  const sidebarRef = useRef<HTMLElement>(null);
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const key = routeKey(route);
-
-  // Collapse after navigating (tapping a menu item should reveal the page).
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [key]);
-
-  // Esc to close, click-outside to close, and drop stale state when the
-  // viewport leaves the mobile breakpoint. Only bound while open.
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setMenuOpen(false);
-      // Send focus back to the trigger so keyboard users keep their place.
-      toggleRef.current?.focus();
-    };
-
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (target && sidebarRef.current && !sidebarRef.current.contains(target)) {
-        setMenuOpen(false);
-      }
-    };
-
-    // Crossing back to desktop un-hides the menu via CSS; clear the flag so
-    // aria-expanded never reports an expanded menu that is not collapsible.
-    const media = window.matchMedia(MOBILE_MEDIA_QUERY);
-    const onBreakpointChange = () => {
-      if (!media.matches) setMenuOpen(false);
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("pointerdown", onPointerDown);
-    media.addEventListener("change", onBreakpointChange);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("pointerdown", onPointerDown);
-      media.removeEventListener("change", onBreakpointChange);
-    };
-  }, [menuOpen]);
-
   return (
-    <aside className="sidebar" ref={sidebarRef}>
-      {/* 顶部固定 header：不随菜单滚动。Slogan（logo + 名称）是可点击链接，
-          点击回到首页 /——移动端从任意文档页点它即可返回总览。
-          The toggle is a sibling of the brand link, never nested inside it. */}
+    <aside className="sidebar" id="site-nav" ref={ref} tabIndex={-1} aria-label={t.navigate}>
+      {/* Pinned sidebar header row: sits above the scrollable menu, does not
+          scroll. The slogan (logo + name) links back to /, so clicking it from
+          any doc page returns to the overview. */}
       <div className="brand-row">
-        <a href={ROUTES.home} className="brand" onClick={() => setMenuOpen(false)}>
+        <a href={ROUTES.home} className="brand" aria-label={t.backHome}>
           <div className="brand-mark">R</div>
           <div>
             <div className="brand-name">RAGX</div>
             <div className="brand-sub">{t.brandSub}</div>
           </div>
         </a>
-        {/* Mobile only (see the max-width:860px block in styles.css): collapses
-            the menu below. Hidden on desktop, where the menu is always shown. */}
-        <button
-          type="button"
-          className="nav-toggle"
-          ref={toggleRef}
-          aria-expanded={menuOpen}
-          aria-controls={NAV_MENU_ID}
-          aria-label={menuOpen ? t.navMenuClose : t.navMenuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? closeIcon : menuIcon}
-        </button>
       </div>
 
-      <div
-        id={NAV_MENU_ID}
-        className={`sidebar-scroll ${menuOpen ? "is-open" : ""}`}
-        // Re-tapping the already-active entry fires no hashchange, so close here
-        // as well; focus is left alone to keep the default link behaviour.
-        onClick={(event) => {
-          if ((event.target as HTMLElement | null)?.closest?.("a")) setMenuOpen(false);
-        }}
-      >
+      <div className="sidebar-scroll">
         <nav className="nav-group">
           <div className="nav-label">{t.navigate}</div>
           <a href={ROUTES.home} className={`nav-item ${activeKind === "home" ? "active" : ""}`}>
@@ -183,7 +84,8 @@ export function Sidebar({ route }: { route: Route }) {
         </div>
       </div>
 
-      {/* 底部固定：GitHub 与语言切换放在一起 */}
+      {/* 底部固定：GitHub 与语言切换放在一起（桌面侧边栏专用；移动端这两个入口
+          搬到顶部 header，见 Header.tsx 与移动端断点块）。 */}
       <div className="sidebar-github">
         <a href={GITHUB_REPO} target="_blank" rel="noreferrer">
           {githubIcon}
