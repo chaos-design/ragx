@@ -428,6 +428,10 @@ a:hover {
   font-size: 15px;
   line-height: 1.75;
   color: var(--ink);
+  /* Safety net for long unbreakable tokens (URLs, identifiers) in prose: without
+     this a single long word inflates the column past the viewport on narrow
+     screens. `break-word` only kicks in when the word cannot fit a line. */
+  overflow-wrap: break-word;
 }
 .doc-body h1,
 .doc-body h2,
@@ -479,6 +483,11 @@ a:hover {
   padding: 2px 6px;
   border-radius: 5px;
   color: var(--cyan);
+  /* Inline code is often a single long identifier/path with no break
+     opportunity (e.g. `EmbeddingService(build_embedding_provider(cfg))`) and
+     `overflow-wrap: break-word` does not always apply to atomic inline boxes.
+     `anywhere` guarantees the token wraps instead of overflowing its column. */
+  overflow-wrap: anywhere;
 }
 .doc-body pre {
   background: var(--surface);
@@ -1026,8 +1035,13 @@ a:hover {
 
 /* ===== Responsive ===== */
 @media (max-width: 1080px) {
+  /* minmax(0, 1fr), NOT bare 1fr: a bare 1fr track has an `auto` minimum
+     (min-content), so a long unbreakable token in the doc body (e.g. an inline
+     file path) inflates the track past the viewport and the whole column
+     overflows and gets clipped. minmax(0, ...) lets the track shrink to the
+     container so prose wraps correctly. */
   .doc-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .doc-toc {
     display: none;
@@ -1153,5 +1167,17 @@ a:hover {
   }
   .page-title {
     font-size: clamp(24px, 5.5vw, 34px);
+  }
+
+  /* Tables: tighten cell padding/type so most tables fit the narrow pane
+     without needing their own scroll. A table that is genuinely wider than the
+     screen still scrolls horizontally inside .doc-body table (overflow-x:auto),
+     so no column is ever clipped. */
+  .doc-body table {
+    font-size: 12.5px;
+  }
+  .doc-body th,
+  .doc-body td {
+    padding: 7px 9px;
   }
 }
