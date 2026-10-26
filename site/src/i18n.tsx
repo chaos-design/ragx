@@ -67,6 +67,14 @@ const STRINGS = {
     pagerHome: "首页",
     pagerGallery: "产物画廊",
     diagramFallback: "图表渲染失败",
+    // Lightbox (click-to-zoom diagram)
+    diagramZoom: "图表放大",
+    diagram: "图表",
+    zoomIn: "放大",
+    zoomOut: "缩小",
+    zoomFit: "适应屏幕",
+    zoomClose: "关闭",
+    zoomHint: "滚轮 / 双指缩放 · 拖拽平移 · Esc 关闭",
     // ArtifactView
     artifactCrumb: "产物",
     artifactNotFound: "未找到产物",
@@ -144,6 +152,13 @@ const STRINGS = {
     pagerHome: "Home",
     pagerGallery: "Artifact Gallery",
     diagramFallback: "Diagram failed to render",
+    diagramZoom: "Diagram zoom",
+    diagram: "Diagram",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    zoomFit: "Fit to screen",
+    zoomClose: "Close",
+    zoomHint: "Scroll / pinch to zoom · drag to pan · Esc to close",
     artifactCrumb: "Artifact",
     artifactNotFound: "Artifact not found",
     artifactNotFoundBody: (slug: ReactNode) => (

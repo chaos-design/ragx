@@ -68,11 +68,11 @@ export function DocView({ slug }: { slug: string }) {
           title = h.textContent ?? "";
         }
       }
-      setZoomTitle(title || getDoc(slug, lang)?.item.title || "图表");
+      setZoomTitle(title || getDoc(slug, lang)?.item.title || t.diagram);
     };
     body.addEventListener("click", onDiagramClick);
     return () => body.removeEventListener("click", onDiagramClick);
-  }, [doc, slug, lang]);
+  }, [doc, slug, lang, t.diagram]);
 
   const closeZoom = useCallback(() => setZoomSvg(null), []);
 

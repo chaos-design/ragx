@@ -902,8 +902,8 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
-  background: rgba(6, 7, 8, 0.82);
+  padding: 24px;
+  background: rgba(6, 7, 8, 0.88);
   backdrop-filter: blur(4px);
 }
 .lightbox-box {
@@ -915,40 +915,48 @@ a:hover {
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
+  /* Programmatic focus target for the dialog; the ring is suppressed because
+     focus lands here on open, not from keyboard traversal. */
+  outline: none;
 }
 .lightbox-head {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 16px;
+  gap: 12px;
+  padding: 10px 14px;
   background: var(--surface-2);
   border-bottom: 1px solid var(--line);
 }
 .lightbox-title {
   font-family: var(--display);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: 0.3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 40vw;
+  /* Shrinkable: the tools never get pushed out of the header. */
+  min-width: 0;
+  max-width: 48%;
 }
 .lightbox-hint {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--faint);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .lightbox-tools {
   margin-left: auto;
   display: flex;
   gap: 6px;
+  flex: 0 0 auto;
 }
 .lightbox-tool {
-  min-width: 30px;
-  height: 30px;
+  min-width: 32px;
+  height: 32px;
   padding: 0 10px;
   font-family: var(--mono);
   font-size: 13px;
@@ -965,16 +973,39 @@ a:hover {
   border-color: var(--blue);
   color: var(--ink);
 }
+.lightbox-tool:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+/* Fit / zoom-readout button: same hit area as the others, wider label. */
+.lightbox-fit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+}
+.lightbox-fit-icon {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.lightbox-percent {
+  font-variant-numeric: tabular-nums;
+  min-width: 3.6ch;
+  text-align: center;
+}
 .lightbox-close {
   color: var(--ink);
   font-size: 12px;
 }
+/* Panning/scaling is driven by transform, so the viewport itself never
+   scrolls — that keeps the fitted diagram centred and avoids double scroll. */
 .lightbox-viewport {
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   cursor: grab;
   touch-action: none;
+  overscroll-behavior: contain;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -982,21 +1013,20 @@ a:hover {
 .lightbox-viewport:active {
   cursor: grabbing;
 }
+/* The stage is sized to the diagram's intrinsic viewBox (inline style from
+   Lightbox.tsx) and scaled by transform, so zoom is predictable and the
+   fitted diagram can fill the whole viewport. */
 .lightbox-stage {
-  width: max-content;
-  max-width: 1600px;
-  min-width: 0;
-  margin: auto;
-  padding: 40px;
+  flex: 0 0 auto;
   transform-origin: center center;
+  will-change: transform;
   background: var(--surface);
 }
 .lightbox-stage svg {
-  width: 100%;
-  height: auto;
   display: block;
+  width: 100%;
+  height: 100%;
 }
-
 /* ===== Responsive ===== */
 @media (max-width: 1080px) {
   /* minmax(0, 1fr), NOT bare 1fr: a bare 1fr track has an `auto` minimum
@@ -1244,5 +1274,67 @@ a:hover {
   .doc-body th,
   .doc-body td {
     padding: 7px 9px;
+  }
+
+  /* ===== Diagram lightbox: full-bleed, toolbox always reachable =====
+     On a phone the desktop chrome wasted 64px of width on the overlay padding
+     and overflowed the header (title + hint + 4 buttons ≈ 500px into a 324px
+     box), pushing the zoom/close controls — the whole function area — outside
+     the clipped box. Full-bleed + shrinkable title + hidden hint keeps every
+     control on screen, and the toolbar buttons grow to 40px so they are
+     comfortable tap targets. */
+  .lightbox {
+    padding: 0;
+    background: rgba(6, 7, 8, 0.97);
+    backdrop-filter: none;
+  }
+  .lightbox-box {
+    border: none;
+    border-radius: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .lightbox-head {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .lightbox-title {
+    flex: 1 1 auto;
+    max-width: none;
+    font-size: 13px;
+  }
+  /* Long gesture hints do not fit a phone header; the gestures stay available
+     and the controls are self-explanatory with their icons/labels. */
+  .lightbox-hint {
+    display: none;
+  }
+  .lightbox-tools {
+    gap: 8px;
+  }
+  .lightbox-tool {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 11px;
+    font-size: 15px;
+  }
+  .lightbox-fit {
+    padding: 0 12px;
+  }
+  .lightbox-percent {
+    min-width: 3.2ch;
+  }
+  .lightbox-close {
+    min-width: 40px;
+    font-size: 14px;
+  }
+
+  /* The "click to enlarge" affordance is a :hover badge, which never fires on
+     touch — keep a compact glyph visible so the diagram reads as tappable. */
+  .mermaid-diagram::after {
+    content: "⛶";
+    top: 6px;
+    right: 6px;
+    padding: 1px 6px;
+    opacity: 0.5;
   }
 }
