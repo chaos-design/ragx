@@ -1054,6 +1054,13 @@ a:hover {
     position: relative;
     z-index: 45;
     flex: 0 0 auto;
+    /* Base .sidebar carries align-self:start (the desktop grid's "pin the
+       column, never stretch" rule). In the mobile flex column that stops the
+       header stretching across the cross (horizontal) axis, shrinking it to
+       content width. Override to stretch so the header spans the full
+       viewport width. */
+    align-self: stretch;
+    width: 100%;
     height: auto;
     overflow: visible;
     display: block;
@@ -1061,24 +1068,18 @@ a:hover {
     border-bottom: 1px solid var(--line);
   }
   /* Only this pane scrolls: it fills the space between the pinned header and
-     the pinned bottom bars, and carries its own overflow. The bottom padding
-     reserves exactly the height of the fixed bars so the last line of content
-     is never hidden behind them; the :has() rule adds the pager's height on
-     pages that have one. */
+     the pinned bottom bars, and carries its own overflow. Its bottom padding
+     reserves the band the fixed bottom bars (.bottombar, and .pager on
+     doc/artifact pages) occupy, so the last line of content is never hidden.
+     The reservation is measured at runtime (useBottomReserve sets
+     --bottom-reserve on <html>) because the pager's height changes with title
+     wrap and language; the var() fallback covers the pre-JS first paint. */
   .content {
     flex: 1 1 auto;
     /* Override the base min-height:100vh so the pane is exactly the flex row. */
     min-height: 0;
     overflow-y: auto;
-    /* Reserve exactly the fixed bottom bar(s) so the last line of content
-       always scrolls above them and is never occluded. */
-    padding-bottom: calc(var(--bottombar-h) + env(safe-area-inset-bottom));
-  }
-  /* Pager pages reserve more: the pager sits above the bottom bar, and both
-     bars carry their own safe-area padding, so the inset is counted twice to
-     guarantee the last line of content clears the pager on notched phones. */
-  .content:has(.pager) {
-    padding-bottom: calc(var(--bottombar-h) + 84px + 2 * env(safe-area-inset-bottom));
+    padding-bottom: var(--bottom-reserve, calc(var(--bottombar-h) + env(safe-area-inset-bottom)));
   }
   .nav-toggle {
     display: inline-flex;

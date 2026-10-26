@@ -7,9 +7,13 @@ import { Home } from "./Home";
 import { LangProvider } from "./i18n";
 import { useHashRoute } from "./routes";
 import { Sidebar } from "./Sidebar";
+import { useBottomReserve } from "./useBottomReserve";
 
 function Shell() {
   const route = useHashRoute();
+  // Mobile app-style layout: keep the scrollable content pane clear of the
+  // fixed bottom bars by measuring their real height (see useBottomReserve).
+  useBottomReserve(route);
 
   let view: ReactNode;
   switch (route.kind) {
