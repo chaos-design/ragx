@@ -983,7 +983,9 @@ a:hover {
 }
 /* Icon-only tool buttons (− / + / ✕): square 32px on desktop, growing to the
    40px mobile tap target below. flex-centred so the glyph sits dead-centre in
-   the square rather than riding on the default 10px horizontal padding. */
+   the square rather than riding on the default 10px horizontal padding.
+   font-size is bumped above the base 13px so the glyph reads clearly inside
+   the square; .lightbox-close rides along to stay visually consistent. */
 .lightbox-icon {
   display: inline-flex;
   align-items: center;
@@ -991,6 +993,7 @@ a:hover {
   width: 32px;
   min-width: 0;
   padding: 0;
+  font-size: 16px;
 }
 /* Fit / zoom-readout button: same hit area as the others, wider label. */
 .lightbox-fit {
@@ -1000,7 +1003,7 @@ a:hover {
   padding: 0 9px;
 }
 .lightbox-fit-icon {
-  font-size: 12px;
+  font-size: 15px;
   opacity: 0.7;
 }
 .lightbox-percent {
@@ -1010,7 +1013,6 @@ a:hover {
 }
 .lightbox-close {
   color: var(--ink);
-  font-size: 12px;
 }
 /* Panning/scaling is driven by transform, so the viewport itself never
    scrolls — that keeps the fitted diagram centred and avoids double scroll. */
@@ -1334,6 +1336,7 @@ a:hover {
   }
   .lightbox-icon {
     width: 40px;
+    font-size: 18px;
   }
   .lightbox-fit {
     padding: 0 12px;
@@ -1343,7 +1346,6 @@ a:hover {
   }
   .lightbox-close {
     min-width: 40px;
-    font-size: 14px;
   }
 
   /* The "click to enlarge" affordance is a :hover badge, which never fires on
