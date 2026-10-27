@@ -326,7 +326,7 @@ export function Lightbox({
           <div className="lightbox-tools">
             <button
               type="button"
-              className="lightbox-tool"
+              className="lightbox-tool lightbox-icon"
               onClick={() => zoomAt(1 / 1.3, ...viewportCenter())}
               aria-label={t.zoomOut}
               title={t.zoomOut}
@@ -347,7 +347,7 @@ export function Lightbox({
             </button>
             <button
               type="button"
-              className="lightbox-tool"
+              className="lightbox-tool lightbox-icon"
               onClick={() => zoomAt(1.3, ...viewportCenter())}
               aria-label={t.zoomIn}
               title={t.zoomIn}
@@ -356,7 +356,7 @@ export function Lightbox({
             </button>
             <button
               type="button"
-              className="lightbox-tool lightbox-close"
+              className="lightbox-tool lightbox-icon lightbox-close"
               onClick={onClose}
               aria-label={t.zoomClose}
               title={t.zoomClose}
