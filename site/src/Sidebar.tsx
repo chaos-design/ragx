@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { artifactPages } from "./artifacts";
 import { catalogFor } from "./docs";
 import { nextLang, useLang } from "./i18n";
@@ -9,7 +10,14 @@ const githubIcon = (
   </svg>
 );
 
-export function Sidebar({ route }: { route: Route }) {
+/**
+ * Desktop navigation column. On mobile the same element doubles as the panel the
+ * header toggle expands (hence `id="site-nav"` + `aria-controls` on the toggle,
+ * and `tabIndex={-1}` so the panel itself can receive programmatic focus when
+ * it opens). Its brand row and footer live in the mobile header there, so both
+ * are hidden inside the mobile breakpoint.
+ */
+export function Sidebar({ ref, route }: { ref?: RefObject<HTMLElement | null>; route: Route }) {
   const { lang, setLang, t } = useLang();
   const catalog = catalogFor(lang);
   const activeKind = route.kind;
@@ -17,14 +25,18 @@ export function Sidebar({ route }: { route: Route }) {
     activeKind === "doc" ? route.slug : activeKind === "artifact" ? route.slug : null;
 
   return (
-    <aside className="sidebar">
-      {/* 顶部固定 header：不随菜单滚动 */}
-      <div className="brand">
-        <div className="brand-mark">R</div>
-        <div>
-          <div className="brand-name">RAGX</div>
-          <div className="brand-sub">{t.brandSub}</div>
-        </div>
+    <aside className="sidebar" id="site-nav" ref={ref} tabIndex={-1} aria-label={t.navigate}>
+      {/* Pinned sidebar header row: sits above the scrollable menu, does not
+          scroll. The slogan (logo + name) links back to /, so clicking it from
+          any doc page returns to the overview. */}
+      <div className="brand-row">
+        <a href={ROUTES.home} className="brand" aria-label={t.backHome}>
+          <div className="brand-mark">R</div>
+          <div>
+            <div className="brand-name">RAGX</div>
+            <div className="brand-sub">{t.brandSub}</div>
+          </div>
+        </a>
       </div>
 
       <div className="sidebar-scroll">
@@ -72,7 +84,8 @@ export function Sidebar({ route }: { route: Route }) {
         </div>
       </div>
 
-      {/* 底部固定：GitHub 与语言切换放在一起 */}
+      {/* 底部固定：GitHub 与语言切换放在一起（桌面侧边栏专用；移动端这两个入口
+          搬到顶部 header，见 Header.tsx 与移动端断点块）。 */}
       <div className="sidebar-github">
         <a href={GITHUB_REPO} target="_blank" rel="noreferrer">
           {githubIcon}

@@ -9,12 +9,18 @@ const STRINGS = {
   zh: {
     brandSub: "文档与产物",
     navigate: "导航",
+    // Mobile nav toggle (hamburger) — label reflects the action, while
+    // aria-expanded carries the current state.
+    navMenuOpen: "展开导航菜单",
+    navMenuClose: "收起导航菜单",
     home: "首页 / 总览",
     gallery: "产物画廊",
     artifacts: "产物 (Artifacts)",
     sidebarFoot: "文档与产物在构建时内联打包；GitHub Actions 构建后经 Vercel 部署",
     langLabel: "English",
     langTitle: "切换到 English",
+    // Compact label for the square language button in the mobile header.
+    langShort: "EN",
     // Home
     homeCrumb: "RAGX · 在线文档中心",
     heroKicker: "Retrieval-Augmented Generation · 工程实践",
@@ -61,6 +67,14 @@ const STRINGS = {
     pagerHome: "首页",
     pagerGallery: "产物画廊",
     diagramFallback: "图表渲染失败",
+    // Lightbox (click-to-zoom diagram)
+    diagramZoom: "图表放大",
+    diagram: "图表",
+    zoomIn: "放大",
+    zoomOut: "缩小",
+    zoomFit: "适应屏幕",
+    zoomClose: "关闭",
+    zoomHint: "滚轮 / 双指缩放 · 拖拽平移 · Esc 关闭",
     // ArtifactView
     artifactCrumb: "产物",
     artifactNotFound: "未找到产物",
@@ -84,12 +98,16 @@ const STRINGS = {
   en: {
     brandSub: "Docs & Artifacts",
     navigate: "Navigate",
+    navMenuOpen: "Open navigation menu",
+    navMenuClose: "Close navigation menu",
     home: "Home",
     gallery: "Artifact Gallery",
     artifacts: "Artifacts",
     sidebarFoot: "Docs and artifacts are inlined at build time; GitHub Actions builds and Vercel deploys",
     langLabel: "中文",
     langTitle: "Switch to 中文",
+    // Compact label for the square language button in the mobile header.
+    langShort: "中",
     homeCrumb: "RAGX · Online Docs",
     heroKicker: "Retrieval-Augmented Generation · Engineering Practice",
     heroTitle: "RAGX Documentation & Artifact Gallery",
@@ -134,6 +152,13 @@ const STRINGS = {
     pagerHome: "Home",
     pagerGallery: "Artifact Gallery",
     diagramFallback: "Diagram failed to render",
+    diagramZoom: "Diagram zoom",
+    diagram: "Diagram",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    zoomFit: "Fit to screen",
+    zoomClose: "Close",
+    zoomHint: "Scroll / pinch to zoom · drag to pan · Esc to close",
     artifactCrumb: "Artifact",
     artifactNotFound: "Artifact not found",
     artifactNotFoundBody: (slug: ReactNode) => (
